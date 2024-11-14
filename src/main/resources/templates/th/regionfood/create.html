@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>지역 음식 등록</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    <!-- Header End -->
+    
+ <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+
+    <div class="menu_line"></div>
+
+    <form name="frm" method="post" th:object="${regionfoodVO}" action="./create" enctype="multipart/form-data">
+      
+      <input type="hidden" name="foodno" th:value="${regionfoodVO.foodno}" />
+<input type="hidden" name="regiono" th:value="${regionfoodVO.regiono}" />
+
+
+
+      <div>
+        <label>음식명</label>
+        <input type="text" name="foodtitle" required="required" autofocus="autofocus" class="form-control" style="width: 100%" />
+      </div>
+     
+     <div>
+         <label>이미지</label>
+       <input type='file' class="form-control" name='fphotoNF' id='fphotoNF' value='' placeholder="파일 선택">  </div>
+      <div>
+        <label>요리 재료 목록</label>
+        <input type="text" name="recipelist" required="required" autofocus="autofocus" class="form-control" style="width: 100%" />
+      </div>
+      <div>
+        <label>필요 조리 도구</label>
+        <input type="text" name="cook_tool" required="required" autofocus="autofocus" class="form-control" style="width: 100%" />
+      </div>
+     <div>
+  <label for="difficulty">난이도</label>
+  <select name="difficulty" id="difficulty" required="required" class="form-control" style="width: 100%">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+</div>
+      <div>
+        <label>필요 조리 시간</label>
+        <input type="text" name="cooktime" required="required" autofocus="autofocus" class="form-control" style="width: 100%" />
+      </div>
+      
+      
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+        <button
+          type="button"
+          onclick="location.href='./list?foodno=${param.foodno}'" 
+          class="btn btn-secondary btn-sm"
+        >
+          목록
+        </button>
+      </div>
+    </form>
+    </div>
+    </div>
+  </div>
+</html>

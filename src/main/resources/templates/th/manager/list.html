@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">
+      <span class="title_line_text">관리자 목록 (관리자 전용)</span>
+    </h1>
+
+    <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+
+
+    </ol>
+  </div>
+
+  <div class='menu_line'></div>
+
+  <div class="container-fluid py-5">
+    <div class="container py-5">
+      <div class="table-responsive">
+        <table class="table">
+          <colgroup>
+            <col style='width: 5%;' />
+            <col style='width: 10%;' />
+            <col style='width: 15%;' />
+            <col style='width: 15%;' />
+            <col style='width: 5%;' />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class='th_bs'> </th>
+              <th class='th_bs'>ID</th>
+              <th class='th_bs'>성명</th>
+              <th class='th_bs'>등록일</th>
+              <th class='th_bs'> </th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <tr th:each="managerVO, status:${list}">
+              <td class='td_basic'>
+                <div>
+                  <div th:if="${managerVO.mgrade >= 1 and managerVO.mgrade <= 10}"><img src='/member/images/admin.png'
+                      title="관리자" class="icon"></div>
+                  <div th:if="${managerVO.mgrade >= 11 and managerVO.mgrade <= 20}"><img src='/member/images/user.png'
+                      title="회원" class="icon"></div>
+                  <div th:if="${managerVO.mgrade >= 30 and managerVO.mgrade <= 39}"><img src='/member/images/pause.png'
+                      title="정지 회원" class="icon"></div>
+                  <div th:if="${managerVO.mgrade >= 40 and managerVO.mgrade <= 49}"><img src='/member/images/x.png'
+                      title="탈퇴 회원" class="icon"></div>
+                </div>
+              </td>
+
+              <td class='td_basic'><a th:href="@{|./read?managerno=${managerVO.managerno}|}"
+                  th:text="${managerVO.mid}"></a></td>
+              <td class='td_basic'><a th:href="@{|./read?managerno=${managerVO.managerno}|}"
+                  th:text="${managerVO.mname}"></a></td>
+              <td class='td_basic' th:text="${managerVO.mdate.substring(0, 10)}"></td>
+              <td class='td_basic'>
+                <img src='/member/images/update.png' title='수정' class="icon"></a>
+                <img src='/member/images/delete.png' title='삭제' class="icon"></a>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+
+</html>

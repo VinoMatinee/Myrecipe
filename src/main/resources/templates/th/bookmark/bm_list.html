@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>북마크 목록</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /bookmark/bm_list_search_component.html 파일의 list_search_fragment import -->
+        <div th:replace="~{th/bookmark/bm_list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+        <input type="hidden" id="accountno" th:value="${session.accountno}" />
+
+        <!-- 북마크 스트립트 -->
+        <script>
+          // 북마크 제거
+          async function deleteBookmark(boardno, accountno) {
+            if (confirm("북마크를 삭제하시겠습니까?")) {
+              const response = await fetch("/bookmark/delete", {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  accountno: accountno,
+                  boardno: boardno,
+                }),
+              });
+
+              if (response.ok) {
+                // 성공적으로 삭제되었을 경우 리스트 페이지로 리디렉트
+                const location = response.headers.get("Location");
+                if (location) {
+                  window.location.href = location;
+                } else {
+                  alert("북마크가 삭제되었습니다.");
+                  // 삭제 후 현재 페이지 새로고침
+                  window.location.reload();
+                }
+              } else {
+                const result = await response.json();
+                alert(result.message);
+              }
+            }
+          }
+        </script>
+
+        <!-- 북마크 table 시작 -->
+        <div class="table-responsive">
+          <table class="table">
+            <colgroup>
+              <col style="width: 10%" />
+              <col style="width: 10%" />
+              <col style="width: 10%" />
+              <col style="width: 30%" />
+              <col style="width: 10%" />
+              <col style="width: 10%" />
+              <col style="width: 10%" />
+              <col style="width: 10%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="th_bs">순서</th>
+                <th class="th_bs">번호</th>
+                <th class="th_bs">제목</th>
+                <th class="th_bs">내용</th>
+                <th class="th_bs">검색어</th>
+                <th class="th_bs">링크</th>
+                <th class="th_bs">등록일</th>
+                <th class="th_bs">기타</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="bookmarkVO, status:${list}" style="cursor: pointer; height: 90px">
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="${no - status.index}"></span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="${bookmarkVO.boardno}"> </span>
+                </td>
+
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="${bookmarkVO.btitle}"> </span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="${bookmarkVO.bcontent}"> </span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="${bookmarkVO.btag}"> </span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <a th:href="@{|/board/read?boardno=${bookmarkVO.boardno}&word=&now_page=|}"> <span style="font-weight: bold"> 링크</span></a>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="|&nbsp;${bookmarkVO.bmdate.substring(0,10)}|" style="font-weight: bold"></span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <button
+                    type="button"
+                    th:onclick="|deleteBookmark(${bookmarkVO.boardno}, ${session.accountno})|"
+                    class="btn btn-md rounded-circle bg-light border text-danger"
+                  >
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr th:if="${list.size() == 0}">
+                <td colspan="8" style="text-align: center">북마크가 등록되지 않았습니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- 북마크 table 종료 -->
+
+        <!-- 페이지 버튼 목록 출력 시작 -->
+        <div class="bottom_menu" th:utext="${paging}"></div>
+        <!-- 페이지 버튼 목록 출력 종료 -->
+      </div>
+    </div>
+  </div>
+</html>

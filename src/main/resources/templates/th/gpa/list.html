@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+
+<html layout:decorate="~{th/layout}"> 
+<head>
+  <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+</head>
+<div layout:fragment="content">
+<div th:fragment="list">
+  <!-- Header start -->
+  <div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">
+      <span class="title_line_text">별점 리스트</span> > <span class="title_line_text">목록(관리자 전용)</span>
+      <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+    </h1>
+
+    <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+    </ol>
+  </div>
+  
+  
+ <input type="hidden" name="now_page" th:value="${now_page}" />
+  <input type="hidden" name="word" th:value="${word}" />
+
+  
+   
+  <div class='menu_line'></div>
+       <div class="container-fluid py-5">
+    <div class="container py-5">
+      <div th:replace="~{th/gpa/list_cno_search_component::list_cno_search_fragment}"></div>
+      <br />
+      <br />
+      <div class="table-responsive">
+   <table class="table">
+    <colgroup>
+      <col style='width: 18%;'/>
+      <col style='width: 18%;'/>
+      <col style='width: 18%;'/>
+      <col style='width: 18%;'/>
+      <col style='width: 18%;'/>
+      
+      
+      <col style='width: 15%;'/>
+    </colgroup>
+    <thead>
+    <tr>
+      <th class='th_bs'>별점 등록 번호</th>
+      <th class='th_bs'>별점 점수</th>
+      <th class='th_bs'>등록한 유저</th>
+      <th class='th_bs'>게시판</th>
+      <th class='th_bs'>등록일</th>
+      
+      <th class='th_bs'>수정|삭제</th>
+      <th class='th_bs'> </th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr th:each="gpaVO, status:${list}">
+      
+      
+         
+          <td class='td_basic' th:text="${gpaVO.gpano}"></td>
+        <td class='td_basic'>
+          <span th:each="star : ${#numbers.sequence(1, gpaVO.gpascore)}" name="reviewStar" id="starfont">★</span>
+        </td>
+         <td class='td_basic' th:text="${gpaVO.accountno}"></td>
+      
+              <td class='td_basic' th:text="${gpaVO.boardno}"></td>
+      <td class='td_basic' th:text="${gpaVO.gpadate}"></td>
+       
+      <td class='td_basic'>
+        <a th:href="@{/gpa/update(gpano=${gpaVO.gpano})}">
+        <img src='/member/images/update.png' title='수정' class="icon"></a>
+        </a>
+        <a th:href="@{/gpa/delete(gpano=${gpaVO.gpano})}">
+    <img src='/member/images/delete.png' title='삭제' class="icon">
+</a>
+      </td>
+   
+    </tr>
+    </tbody>
+  </table>
+   </div>
+  <div class='bottom_menu'>
+    <div class="bottom_menu" th:utext="${paging}"></div> </div>
+</div>
+</div>
+</html>
+
+

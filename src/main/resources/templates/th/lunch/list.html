@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>점심 추천 목록</span>
+      </h1>
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+      </ol>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <input type="hidden" name="accountno" th:value="${accountno}" />
+        <table class="table table-hover text-center">
+          <colgroup>
+            <col style="width: 15%" />
+            <col style="width: 65%" />
+            <col style="width: 10%" />
+            <col style="width: 10%" />
+          </colgroup>
+          <thead>
+            <tr>
+              <th class="th_bs">메뉴</th>
+              <th class="th_bs">레시피</th>
+              <th class="th_bs">등록일</th>
+              <th class="th_bs">기타</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="lunchVO, status : ${list}">
+              <td class="td_basic" th:text="${lunchVO.l_menu}"></td>
+
+              <td class="td_basic" th:text="${lunchVO.l_recipe}"></td>
+
+              <td class="td_basic" th:text="${lunchVO.l_date.substring(0, 10)}"></td>
+
+              <td class="td_basic">
+                <script>
+                  function confirmDelete() {
+                    if (confirm("정말로 삭제하시겠습니까?")) {
+                      return true;
+                    }
+                    return false;
+                  }
+                </script>
+                <form action="/lunch/delete" method="post" onsubmit="return confirmDelete();">
+                  <input type="hidden" name="l_no" th:value="${lunchVO.l_no}" />
+                  <!-- <button><i class="bi bi-trash3"></i></button> -->
+                  <button class="btn btn-md rounded-circle bg-light border text-danger">
+                    <i class="bi bi-trash3"></i>
+                  </button>
+                </form>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="d-flex justify-content-center mt-3">
+          <button type="button" onclick="location.reload();" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">
+            새로 고침
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

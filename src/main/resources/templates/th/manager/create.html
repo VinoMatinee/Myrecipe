@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+
+<div layout:fragment="content">
+  
+    <!-- Header start -->
+  <div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">
+      <span class="title_line_text">관리자 회원가입</span>
+    </h1>
+
+    <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+    </ol>
+  </div>
+  <!-- Single Page Header End -->
+  <script>
+    window.onload = () => {
+      document.querySelector('#mid').addEventListener('keypress', (event) => {
+      // document.getElementById('passwd').addEventListener('keypress', (event) => {
+        if(event.key === 'Enter') { // ===: 타입까지 확인
+          document.getElementById('btn_checkID').focus();
+        }
+      }); 
+  
+      document.querySelector('#mpasswd').addEventListener('keypress', (event) => {
+      // document.getElementById('passwd').addEventListener('keypress', (event) => {
+        if(event.key === 'Enter') {
+          document.getElementById('mpasswd2').focus();
+        }
+      }); 
+  
+      document.querySelector('#mpasswd2').addEventListener('keypress', (event) => {
+      // document.getElementById('passwd').addEventListener('keypress', (event) => {
+        if(event.key === 'Enter') {
+          document.getElementById('mname').focus();
+        }
+      }); 
+  
+      document.querySelector('#mname').addEventListener('keypress', (event) => {
+      // document.getElementById('passwd').addEventListener('keypress', (event) => {
+        if(event.key === 'Enter') {
+          document.getElementById('btn_send').focus();
+        }
+      });
+     
+      
+    }
+    
+    function checkID() {
+      // alert('checkID()');
+      
+      let mid = document.getElementById('mid');
+      let mid_msg = document.getElementById('mid_msg');
+  
+      if (mid.value.trim().length == 0) {
+        mid_msg.innerHTML= 'ID 입력은 필수 입니다. ID(이메일)는 3자이상 권장합니다.';
+        mid_msg.classList.add('span_warning');    // class 적용
+        mid.focus();
+  
+        return false;  // 회원 가입 진행 중지
+        
+      } else {  // when ID is entered
+        mid_msg.classList.remove('span_warning'); // class 삭제
+  
+       // ---------------------------------------------------------------------------------------
+       // fetch 관련 시작
+       // ---------------------------------------------------------------------------------------
+        let mid = document.getElementById('mid');
+        let url = './checkID?mid=' + mid.value;
+    
+        fetch(url, {
+            method: 'GET',
+            // headers: {
+            //   'Content-Type': 'application/json' // JSON 형식으로 데이터 전송을 알림
+            // },
+            // body: JSON.stringify(dataToSend) // JSON 데이터를 문자열로 변환하여 요청 본문에 포함            
+        })
+        .then(response => response.json())
+        .then(rdata => {
+          if (rdata.cnt > 0) { // 아이디 중복
+            mid_msg.innerHTML= '이미 사용중인 ID(이메일) 입니다. 다른 ID(이메일)을 지정해주세요.';
+            mid_msg.classList.add('span_warning');
+            mid.focus();
+              
+          } else { // 아이디 중복 안됨.
+            mid_msg.innerHTML= '사용 가능한 ID(이메일) 입니다.';
+            mid_msg.classList.add('span_info');
+            document.getElementById('mpasswd').focus(); 
+          }
+        })
+        .catch(error => { // 서버 다운등 통신 에러
+            console.error('Error:', error);
+        });      
+            
+        // 처리중 출력
+        id_msg.innerHTML="<img src='/images/progress.gif' style='width: 5%;'>"; // static 기준
+
+       // ---------------------------------------------------------------------------------------
+       // fetch 관련 종료
+       // ---------------------------------------------------------------------------------------
+        
+      }
+    }
+    
+    function send() { // 회원 가입 처리
+      let mid = document.getElementById('mid');
+      let mid_msg = document.getElementById('mid_msg');
+  
+      if (mid.value.trim().length == 0) {
+        mid_msg.innerHTML= 'ID 입력은 필수 입니다. ID(이메일)는 3자이상 권장합니다.';
+        mid_msg.classList.add('span_warning');    // class 적용
+        mid.focus();
+  
+        return false;  // 회원 가입 진행 중지
+        
+      }
+  
+      // 패스워드를 정상적으로 2번 입력했는지 확인
+      let mpasswd = document.getElementById('mpasswd');
+      let mpasswd2 = document.getElementById('mpasswd2');
+      let mpasswd2_msg = document.getElementById('mpasswd2_msg');
+  
+      if (mpasswd.value != mpasswd2.value) {
+        mpasswd2_msg.innerHTML= '입력된 패스워드가 일치하지 않습니다.';
+        mpasswd2_msg.classList.add('span_warning');    // class 적용
+        mpasswd.focus();  // 첫번째 패스워드로 focus 설정
+  
+        return false;  // 회원 가입 진행 중지
+      }
+  
+      let mname = document.getElementById('mname');
+      let mname_msg = document.getElementById('mname_msg');
+  
+      if (mname.value.length == 0) {
+        mname_msg.innerHTML= '이름 입력은 필수입니다.';
+        mname_msg.classList.add('span_warning');    // class 적용
+        mname.focus();
+  
+        return false;  // 회원 가입 진행 중지
+      }
+      
+  
+       document.getElementById('frm').submit(); // required="required" 작동 안됨.
+    }    
+  </script>
+
+  <div class='menu_line'></div>
+  
+  <div style="width: 60%; margin: 0px auto ">
+    <form name="frm" id="frm" th:object="${managerVO}" method="post" action="/manager/signin_manager">
+      <div>
+        <label for="mid">아이디(이메일)*</label>
+        <input type="text" name="mid" id="mid" value="" autofocus="autofocus"
+               class="form-control fom-control-sm" style="width: 50%;" th:field="*{mid}">
+        <button type='button' id="btn_checkID" onclick="checkID()" 
+                     class="btn btn-primary btn-sm" style="margin-top: 4px;">중복확인</button>
+        <span id='mid_msg'></span>  
+      </div>
+      
+      <div class="form-group">
+        <label for="mpasswd">패스워드*</label> 
+        <input type='password' name='mpasswd' id='mpasswd' value='1234' required="required" 
+                  placeholder="패스워드" class="form-control form-control-sm" style="width: 30%;">
+      </div>
+
+      <div class="form-group">
+        <label for="mpasswd2">패스워드 확인*</label>
+        <input type='password' name='mpasswd2' id='mpasswd2' value='1234' required="required" 
+                  placeholder="패스워드 확인" class="form-control form-control-sm" style="width: 30%;">
+        <span id='mpasswd2_msg'></span>
+      </div>
+
+      <div class="form-group">
+        <label for="mname">성명*</label>
+        <input type='text' name='mname' id='mname' value='하정우' required="required" 
+                   placeholder="성명" class="form-control form-control-sm" style="width: 30%;">
+        <span id='mname_msg'></span>
+      </div>   
+  
+      <div class="d-flex justify-content-center mt-3">
+        <button type="button" onclick="send();" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">가입</button>
+        <button type="button" onclick= window.location.href='/' class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">취소</button>
+      </div>
+
+
+    </form>
+  </div>
+    
+</div>
+
+</html>
+
+

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html> 
+<head>
+  <link href="/css/style.css" rel="stylesheet" type="text/css"> <!-- /static 기준 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+
+<body th:fragment="youtube">
+  <div style="width: 90%; margin: 50px auto; text-align: center;">
+    <div class="youtuberoom">
+      <h2 class="youtext"><i class="fa-brands fa-youtube"></i>화제의 영상</h2>
+      <!--<iframe src="https://www.youtube.com/embed/Rrf8uQFvICE" width="300px", height=200px>
+    <p>영상제목.</p>
+  </iframe>
+  <iframe src="https://www.youtube.com/embed/Rrf8uQFvICE" width="300px", height=200px>
+    <p>영상제목.</p>
+  </iframe>
+  <iframe src="https://www.youtube.com/embed/Rrf8uQFvICE" width="300px", height=200px>
+    <p>영상제목.</p>
+  </iframe>-->
+    
+      <div class="youtube-carousel-wrap">
+        <div class="youtube-carousel-main">
+          <iframe id="main-youtube-video" src="https://www.youtube-nocookie.com/embed/J4vEoFVcguw" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+        <div class="youtube-carousel-gallery" data-simplebar>
+    <div th:each="video, iterStat : ${videos}" th:switch="${iterStat.index}">
+        <div th:case="0" class="youtube-control growBusiness-vid" th:data-source="${video.url}">
+            <p class="youtube-caption" th:text="${video.videotitle}"></p>
+        </div>
+        <div th:case="1" class="youtube-control timothys-vid" th:data-source="${video.url}">
+            <p class="youtube-caption" th:text="${video.videotitle}"></p>
+        </div>
+        <div th:case="2" class="youtube-control watermark-vid" th:data-source="${video.url}">
+            <p class="youtube-caption" th:text="${video.videotitle}"></p>
+        </div>
+        <div th:case="3" class="youtube-control taborHill-vid" th:data-source="${video.url}">
+            <p class="youtube-caption" th:text="${video.videotitle}"></p>
+        </div>
+        <div th:case="4" class="youtube-control gravityBrew-vid" th:data-source="${video.url}">
+            <p class="youtube-caption" th:text="${video.videotitle}"></p>
+        </div>
+        <div th:case="*" class="youtube-control timothys-vid" th:data-source="${video.url}">
+            <p class="youtube-caption" th:text="${video.videotitle}"></p>
+        </div>
+    </div>
+</div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var videos = document.getElementsByClassName("youtube-control");
+      for (var i = 0; i < videos.length; i++) {
+        
+        videos[i].addEventListener("click", function() {
+           console.log('Video 클릭:', this);
+          changeSrc(this);
+        }, false);
+      }
+
+      function changeSrc($this) {
+        console.log('바뀐 소스:', $this);
+        var source = $this.getAttribute("data-source");
+        console.log('New 소스:', source);
+        var mainVideo = document.getElementById("main-youtube-video");
+        mainVideo.src = source;
+      }
+    });
+  </script>
+</body>
+</html>

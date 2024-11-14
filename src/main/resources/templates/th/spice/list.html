@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <div class="title_line">
+      <span class="title_line_text">향신료 정보</span>
+      <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+    </div>
+
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span class="title_line_text">향신료 정보</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item" th:if="${session.managerno >= 0}">
+          <a href="/spice/list_search">등록</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+      </ol>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /spice/list_search_component.html 파일의 list_search_fragment import -->
+        <div th:replace="~{th/spice/list_cno_search_component::list_cno_search_fragment}"></div>
+        <br />
+        <br />
+
+        <!-- Grid start-->
+        <div class="row g-4 justify-content-center">
+          <div th:if="${list.size() == 0}" class="col-md-12 text-center">
+            <p>등록된 내용이 없습니다.</p>
+          </div>
+
+          <div
+            class="col-md-6 col-lg-6 col-xl-4"
+            th:if="${list.size() > 0}"
+            th:each="spiceVO, status:${list}"
+            th:attr="onclick=|location.href='/spice/cno_read?spiceno=${spiceVO.spiceno}&word=${word}&now_page=${now_page}'|"
+          >
+            <div class="rounded position-relative fruite-item">
+              <div class="fruite-img">
+                <div th:if="${spiceVO.spiceimg.endsWith('jpg') or spiceVO.spiceimg.endsWith('png')  or spiceVO.spiceimg.endsWith('gif')}">
+                  <img th:src="@{|/spice/storage/${spiceVO.spicethumb}|}" class="img-fluid w-100 rounded-top" style="width: 100%; height: 300px" />
+                </div>
+
+                <div
+                  th:if="${((spiceVO.spiceimg.endsWith('jpg') or spiceVO.spiceimg.endsWith('png')  or spiceVO.spiceimg.endsWith('gif')) == false) and (spiceVO.spicesize > 0)}"
+                  class="img-fluid w-100 rounded-top"
+                >
+                  <span th:text="${spiceVO.spiceimg}"></span>
+                </div>
+                <div th:if="${spiceVO.spicesize == 0}">
+                  <img src="/spice/images/None.jpg" class="img-fluid w-100 rounded-top" style="width: 100%; height: 300px" />
+                </div>
+              </div>
+              <div
+                class="text-white bg-secondary px-3 py-1 rounded position-absolute"
+                style="top: 10px; left: 10px"
+                th:text="${spiceVO.spicename}"
+              ></div>
+              <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                <h4 th:text="${spiceVO.spicename}"></h4>
+                <span th:if="${spiceVO.spicecont.length() > 30 }" th:text="|${spiceVO.spicecont.substring(0, 30) }...|"></span>
+                <span th:if="${spiceVO.spicecont.length() <= 30 }" th:text="|${spiceVO.spicecont}|"></span>
+                <div class="d-flex justify-content-between">
+                  <span></span>
+                  <span th:if="${spiceVO.good > 0 }" th:text="|추천수: ${spiceVO.good}|" class="text-end"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paging button start -->
+        <div class="bottom_menu" th:utext="${paging}"></div>
+      </div>
+    </div>
+  </div>
+</html>

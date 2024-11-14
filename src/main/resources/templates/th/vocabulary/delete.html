@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> 
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <div id="panel_delete" style="padding: 10px 0px 10px 0px; width: 100%; text-align: center">
+      <form name="frm" th:object="${vocabularyVO}" method="post" action="/vocabulary/delete">
+        <!-- hidden -->
+        <input type="hidden" name="vocano" th:value="${vocabularyVO.vocano}" />
+        
+        <div class="msg_warning">단어를 삭제하면 복구 할 수 없습니다.</div>
+        [ <span th:text="${vocabularyVO.vocano}" class="title_line_text"></span>  
+         ]
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+          <button type="button" th:attr="onclick=|location.href='/vocabulary/list'|" class="btn btn-secondary btn-sm">취소</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</html>

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SB가 자동으로 구현하여 연동하는 interface -->
+<mapper namespace="dev.mvc.region.RegionDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+  <insert id="create" parameterType="dev.mvc.region.RegionVO">
+    INSERT INTO region(regiono, regionname, managerno)
+    VALUES(region_seq.nextval, #{regionname}, #{managerno})
+  </insert>
+  
+ <select id="list" parameterType="dev.mvc.region.RegionVO">
+  SELECT regiono, regionname, managerno
+  FROM region
+  ORDER BY regiono ASC
+  </select>
+  
+  <delete id="delete" parameterType="dev.mvc.region.RegionVO">
+    DELETE FROM region WHERE regiono=#{regiono}
+  </delete>
+  
+  
+  <update id="update" parameterType="dev.mvc.region.RegionVO">
+    UPDATE region
+    SET regionname = #{regionname}
+    WHERE regiono = #{regiono}
+    
+  </update>
+  
+  <!-- 조회 -->
+  <select id="read" resultType="dev.mvc.region.RegionVO" parameterType="int">
+    SELECT regiono, regionname, managerno
+    FROM region
+    WHERE regiono = #{regiono}
+  </select>
+  
+  
+   <select id="list_search_paging" resultType="dev.mvc.region.RegionVO" parameterType="Map">
+    SELECT regiono, regionname, managerno, r
+    FROM (
+        SELECT regiono, regionname, managerno, rownum as r
+        FROM (
+            SELECT v.regiono, v.regionname, v.managerno, m.MNAME
+            FROM region v
+            INNER JOIN MANAGER m ON v.managerno = m.MANAGERNO
+            <if test="word != null and word !=''">
+            WHERE UPPER(v.regionname) LIKE '%' || UPPER(#{word}) || '%'  
+            </if>
+            ORDER BY v.regiono ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+</select>
+  
+  <!--페이징 -->
+  <!--
+  <select id="list_search_paging" resultType="dev.mvc.video.VideoVO" parameterType="Map">
+    SELECT  videono, videotitle, url, descripe,video_date,managerno, r
+    FROM (
+        SELECT videono, videotitle, url, descripe,video_date,managerno, rownum as r
+        FROM (
+            SELECT videono, videotitle, url, descripe,video_date,managerno
+            FROM video
+            <if test="word != null and word !=''">
+            WHERE UPPER(videotitle) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(descripe) LIKE '%' || UPPER(#{word}) || '%' 
+            </if>
+            ORDER BY videono ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+-->
+  <!-- 검색된 코드 수 -->
+  <select id="list_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM region
+    <if test="word != null and word !=''">
+      WHERE UPPER(regionname) LIKE '%' || UPPER(#{word}) || '%' 
+    </if>
+    ORDER BY regiono ASC
+  </select>
+  
+ 
+  
+</mapper>

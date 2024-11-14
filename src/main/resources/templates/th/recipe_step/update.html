@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <div class="title_line">지역 음식 수정</div>
+
+    <!-- /crudcate/list_search_component 로 교체 -->
+  <!--  <div th:replace="~{crudcate/list_search_component::list_search_fragment}"></div>
+    -->
+    <div class="menu_line"></div>
+
+    <form name="frm" th:object="${regionfoodVO}" method="post" action="/regionfood/update" enctype="multipart/form-data">
+      <!-- hidden -->
+      <input type="hidden" name="foodno" th:value="${regionfoodVO.foodno}" />
+      
+
+     
+      
+      
+      <div style="margin: 5px auto; width: 50%">
+         <label>음식명</label>
+        <input
+            type="text"
+            name="foodtitle" 
+            value="{foodtitle}"
+            class="form-control fom-control-sm"
+            style="width: 100%; height: 300px"
+            th:field="*{foodtitle}"
+            placeholder="수정할 음식 이름을 입력하세요."
+        />
+        <div th:if="${#fields.hasErrors('foodtitle')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+          <div th:each="err : ${#lists.sort(#fields.errors('foodtitle'))}" th:text="${err}"></div>
+        </div>
+      </div>
+
+      <div>
+       <label>요리 재료 목록</label>
+       <input
+            type="text"
+            name="recipelist" 
+            value="{recipelist}"
+            class="form-control fom-control-sm"
+            style="width: 100%; height: 300px"
+            th:field="*{recipelist}"
+            placeholder="수정할 요리 재료 목록을 입력하세요."
+        /> </div>  
+        
+        <div>
+         <label>필요 조리 도구</label>
+       <input
+            type="text"
+            name="cook_tool" 
+            value="{cook_tool}"
+            class="form-control fom-control-sm"
+            style="width: 100%; height: 300px"
+            th:field="*{cook_tool}"
+            placeholder="수정할 요리 도구 목록을 입력하세요."
+        /> </div>  
+        
+      <div>
+  <label for="difficulty">난이도</label>
+  <select name="difficulty" id="difficulty" required="required" class="form-control" style="width: 100%">
+    <option value="1">1</option>
+    <option value="2">2</option>
+    <option value="3">3</option>
+    <option value="4">4</option>
+    <option value="5">5</option>
+    <option value="6">6</option>
+    <option value="7">7</option>
+    <option value="8">8</option>
+    <option value="9">9</option>
+    <option value="10">10</option>
+  </select>
+</div>
+
+ <div>
+         <label>조리시간</label>
+       <input
+            type="text"
+            name="cooktime" 
+            value="{cooktime}"
+            class="form-control fom-control-sm"
+            style="width: 100%; height: 300px"
+            th:field="*{cooktime}"
+            placeholder="수정할 조리 시간을 입력하세요."
+        /> </div>  
+
+      <!-- th:attr="onclick=|location.href='/video/list_search?word=${word}&now_page=${now_page}'|" -->
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">수정</button>
+        <button
+          type="button"
+          th:attr="onclick=|location.href='/video/list'|"
+          class="btn btn-secondary btn-sm"
+        >
+          취소
+        </button>
+      </div>
+    </form>
+</div>
+    <br />
+    <!-- /crudcate/list_all_component 로 교체 -->
+    <!--
+    <div th:replace="~{crudcate/list_all_component::list_all_fragment}"></div>
+  -->
+  </div>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+
+
+<html layout:decorate="~{th/layout}"> 
+<head>
+  <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+</head>
+<div layout:fragment="content">
+<div th:fragment="list">
+  <div class='title_line'>지역 음식 리스트</div>
+
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로고침</a>
+    
+    
+  </aside> 
+   
+   <input type="hidden" name="now_page" th:value="${now_page}" />
+    <input type="hidden" name="word" th:value="${word}" />
+<div th:replace="~{th/regionfood/list_cno_search_component::list_cno_search_fragment}"></div>
+ 
+   
+  <div class='menu_line'></div>
+       
+   <table class="table table-striped" style='width: 100%;'>
+    <colgroup>
+      <col style='width: 5%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      
+      
+      <col style='width: 5%;'/>
+    </colgroup>
+    <tr>
+      <th class='th_bs'>지역음식 이름</th>
+      <th class='th_bs'>음식 사진</th>
+      <th class='th_bs'>요리 재료 목록</th>
+      <th class='th_bs'>필요 조리 도구</th>
+      <th class='th_bs'>난이도 </th>
+      <th class='th_bs'>조리시간</th>
+      
+      <th class='th_bs'>수정|삭제</th>
+      <th class='th_bs'> </th>
+    </tr>
+   
+    <tr th:each="regionfoodVO, status:${alist}" th:attr="onclick=|location.href='/regionfood/read?foodno=${regionfoodVO.foodno}'|">
+      
+       <fieldset>
+         
+         
+        
+         <td class='td_basic' style='height: 150px;' th:utext="${regionfoodVO.foodtitle}"></td>
+      
+              <td class='td_basic' th:text="${regionfoodVO.foodimg_url}"></td>
+       
+              <td class='td_basic' th:text="${regionfoodVO.recipelist}"></td>
+       
+              <td class='td_basic' th:text="${regionfoodVO.cook_tool}"></td>
+       
+              <td class='td_basic' th:text="${regionfoodVO.difficulty}"></td>
+                     
+              <td class='td_basic' th:text="${regionfoodVO.cooktime }"></td>
+       
+       
+      <td class='td_basic'>
+        <a th:href="@{/region/update(regiono=${regionfoodVO.foodno})}">
+        <img src='/member/images/update.png' title='수정' class="icon"></a>
+        </a>
+        <a th:href="@{/region/delete(regiono=${regionfoodVO.foodno})}">
+    <img src='/member/images/delete.png' title='삭제' class="icon">
+</a>
+      </td>
+      </fieldset>
+    </tr>
+  </table>
+   
+  <div class='bottom_menu'>
+    <button type='button' onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  </div>
+</div>
+</div>
+</html>
+
+

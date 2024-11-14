@@ -1,0 +1,77 @@
+<!-- div th:replace=... 사용 -->
+<div th:fragment="list_all_fragment" class="container-fluid">
+  <table class="table table-hover">
+    <colgroup>
+      <col style="width: 5%" />
+      <col style="width: 10%" />
+      <col style="width: 20%" />
+      <col style="width: 20%" />
+      <col style="width: 15%" />
+      <col style="width: 10%" />
+      <col style="width: 10%" />
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th_bs">번호</th>
+        <th class="th_bs">이미지</th>
+        <th class="th_bs">이름</th>
+        <th class="th_bs">설명</th>
+        <th class="th_bs">구매처</th>
+        <th class="th_bs">가격</th>
+        <th class="th_bs">등록일</th>
+        <th class="th_bs">기타</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="spiceVO, status:${list}">
+        <td class="td_bs" th:text="${no - status.index}"></td>
+
+        <td class="td_bs">
+          <div th:if="${spiceVO.spiceimg.endsWith('jpg') or spiceVO.spiceimg.endsWith('png') or spiceVO.spiceimg.endsWith('gif')}">
+            <img th:src="@{|/spice/storage/${spiceVO.spicethumb}|}" style="width: 90px; height: 70px;">
+          </div>
+          <div th:if="${spiceVO.spicesize == 0}">
+            <img src="/spice/images/None.jpg" style="width: 90px; height: 70px;">
+          </div>
+        </td>
+        <td class="td_bs">
+          <a
+            th:href="@{|/spice/read/${spiceVO.spiceno}?word=${word}&now_page=${now_page}|}"
+            style="display: block"
+            th:text="${spiceVO.spicename}"
+          ></a>
+        </td>
+        <td class="td_bs">
+          <a
+            th:href="@{|/spice/read/${spiceVO.spiceno}?word=${word}&now_page=${now_page}|}"
+            style="display: block"
+            th:text="${spiceVO.spicecont}"
+          ></a>
+        </td>
+        <td class="td_bs">
+          <a
+            th:href="@{|/spice/read/${spiceVO.spiceno}?word=${word}&now_page=${now_page}|}"
+            style="display: block"
+            th:text="${spiceVO.url}"
+          ></a>
+        </td>
+        <td class="td_bs">
+          <a
+            style="display: block"
+            th:text="${spiceVO.spiceprice}"
+          ></a>
+        </td>
+        <td class="td_bs" th:text="${spiceVO.spicedate.substring(5, 10)}"></td>
+        <td class="td_bs">
+          <a th:href="@{|/spice/update/${spiceVO.spiceno}?word=${word}&now_page=${now_page}|}"><i class="bi bi-pencil-square"></i></a>
+          <span class="menu_devide"> |</span>
+          <a th:href="@{|/spice/delete/${spiceVO.spiceno}?word=${word}&now_page=${now_page}|}"><i class="bi bi-trash3"></i></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 -->
+</div>

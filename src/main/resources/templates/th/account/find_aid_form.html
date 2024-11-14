@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+
+<div layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+
+<div layout:fragment="content">
+    <!-- Header start -->
+  <div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">
+      <span class="title_line_text">아이디 찾기</span>
+    </h1>
+
+    <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a th:href="@{/account/login}">회원가입</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a th:href="@{/account/login}">로그인</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+    </ol>
+  </div>
+  <!-- Single Page Header End -->
+  
+  <script>
+  window.onload = () => {
+    document.querySelector('#aname').addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        document.getElementById('atel').focus();
+      }
+    });
+
+    document.querySelector('#atel').addEventListener('keypress', (event) => {
+      if (event.key === 'Enter') {
+        document.getElementById('btn_send').focus();
+      }
+    });
+  };
+
+  
+</script>
+
+  <div class='menu_line'></div>
+    <div class="container-fluid py-5">
+    <div class="container py-5">
+
+  <div style="width: 60%; margin: 0px auto ">
+    <form name="frm" method="post" action="/account/find_aid">
+
+      <div class="form-group">
+        <label for="aname">성명*</label>
+        <input type='text' name='aname' id='aname' value='김아무개' required="required" placeholder="성명"
+          class="form-control form-control-sm" style="width: 30%;">
+        <span id='aname_msg'></span>
+      </div>
+
+      <div class="form-group">
+        <label for="atel">전화 번호*</label>
+        <input type='text' name='atel' id='atel' value='456-4567-4567' required="required" placeholder="전화번호"
+          class="form-control form-control-sm" style="width: 30%;">
+        예) 010-0000-0000
+        <span id='atel_msg'></span>
+      </div>
+      
+
+
+      <div class="d-flex justify-content-center mt-3">
+        <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">ID 찾기</button>
+        <button type="button" onclick="history.back();" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">취소</button>
+      </div>
+
+
+    </form>
+  </div>
+</div>
+</div>
+</div>
+
+</html>

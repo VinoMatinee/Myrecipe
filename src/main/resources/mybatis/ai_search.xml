@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.ai.AiDAOInter">
+  <insert id="create" parameterType="dev.mvc.ai.AiVO">
+    INSERT INTO AI_SEARCH (SEARCHNO, IMG_SEARCH, IMG_SEARCH_SAVE, IMG_SEARCH_THUMB, IMG_SEARCH_SIZE, TEXT_SEARCH, ACCOUNTNO, ANSWERNO)
+    VALUES (AI_SEARCH_SEQ.NEXTVAL, #{img_search}, #{img_search_save}, #{img_search_thumb}, #{img_search_size}, #{text_search}, #{accountno}, #{answerno})
+  </insert>
+  
+  
+  <select id="list" parameterType="dev.mvc.ai.AiVO">
+  SELECT SEARCHNO, IMG_SEARCH, IMG_SEARCH_SAVE, IMG_SEARCH_THUMB, IMG_SEARCH_SIZE, TEXT_SEARCH, ACCOUNTNO, ANSWERNO
+  FROM AI_SEARCH
+  ORDER BY SEARCHNO ASC
+  </select>
+
+  
+  <select id="img" parameterType="dev.mvc.ai.AiVO">
+  SELECT IMG_SEARCH, IMG_SEARCH_SAVE, IMG_SEARCH_THUMB, IMG_SEARCH_SIZE, RDATE
+  FROM AI_SEARCH
+   WHERE accountno = #{accountno}
+  </select>
+
+  <select id="img_all" parameterType="dev.mvc.ai.AiVO">
+  SELECT IMG_SEARCH, IMG_SEARCH_SAVE, IMG_SEARCH_THUMB, IMG_SEARCH_SIZE, RDATE
+  FROM AI_SEARCH
+  </select>
+  
+  <update id="update" parameterType="dev.mvc.ai.AiVO">
+    UPDATE AI_SEARCH
+    SET IMG_SEARCH = #{img_search}, IMG_SEARCH_SAVE = #{img_search_save}, IMG_SEARCH_THUMB = #{img_search_thumb}, IMG_SEARCH_SIZE = #{img_search_size}
+    ,TEXT_SEARCH = #{text_search}
+    WHERE SEARCHNO = #{searchno}
+    
+  </update>
+  
+  
+  
+  <delete id="delete" parameterType="dev.mvc.ai.AiVO">
+    DELETE FROM AI_SEARCH WHERE SEARCHNO=#{searchno}
+  </delete>
+  
+</mapper>
+
+
+
+
+
+
+
+
+
+

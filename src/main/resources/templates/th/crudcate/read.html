@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>카테고리 조회</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /crudcate/list_search_component 로 교체 -->
+        <div th:replace="~{th/crudcate/list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+
+        <div class="d-flex justify-content-center">
+          <div class="col-8">
+            <div class="row bg-light align-items-center text-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">번호</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.crudcateno}"></span></p>
+              </div>
+            </div>
+            <div class="row text-center align-items-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">대분류</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.name}"></span></p>
+              </div>
+            </div>
+            <div class="row bg-light text-center align-items-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">중분류</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.namesub}"></span></p>
+              </div>
+            </div>
+            <div class="row text-center align-items-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">소분류</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.namesubsub}"></span></p>
+              </div>
+            </div>
+
+            <div class="row bg-light text-center align-items-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">자료수</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.cnt}"></span></p>
+              </div>
+            </div>
+
+            <div class="row text-center align-items-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">등록일</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.crudate}"></span></p>
+              </div>
+            </div>
+
+            <div class="row bg-light text-center align-items-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">출력 순서</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.seqno}"></span></p>
+              </div>
+            </div>
+
+            <div class="row text-center align-items-center justify-content-center py-2">
+              <div class="col-6">
+                <p class="mb-0">출력 모드</p>
+              </div>
+              <div class="col-6">
+                <p class="mb-0"><span th:text="${crudcateVO.visible}"></span></p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <br />
+        <!-- /crudcate/list_all_component 로 교체 -->
+        <div th:replace="~{th/crudcate/list_all_component::list_all_fragment}"></div>
+      </div>
+    </div>
+  </div>
+</html>

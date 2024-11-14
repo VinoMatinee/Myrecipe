@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+<div layout:fragment="content">
+  <div class='title_line'> 댓글</div>
+
+  <table class="table table-hover">
+    <colgroup>
+      <col style='width: 20%;' />
+      <col style='width: 20%;' />
+      <col style='width: 20%;' />
+      <col style='width: 20%;' />
+    </colgroup>
+    <thead>
+      <tr>
+        <th class="th_bs">순서</th>
+        <th class="th_bs">내용</th>
+        <th class="th_bs">이미지</th>
+        <th class="th_bs">등록일</th>
+        <th class="th_bs">기타</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr th:each="brereplyVO, status:${list}">
+        <td class="td_bs" th:text="${brereplyVO.brereplyno}"></td>
+        <td class="td_bs"><a th:href="@{|./brereply_read?brereplyno=${brereplyVO.brereplyno}|}" style="display: block;"
+            th:text="${brereplyVO.brereplycont}"></a></td>
+        <td class='td_basic' >
+          <div th:if="${brereplyVO.brereplyimg.endsWith('jpg') or brereplyVO.brereplyimg.endsWith('png') or brereplyVO.brereplyimg.endsWith('gif')}">
+            <img th:src="@{|/brereply/storage/${brereplyVO.brereplythumb}|}" style="width: 90px; height: 70px;">
+          </div>
+            
+          <div th:if="${brereplyVO.brereplysize == 0}">
+            <img src="/breply/images/None3.jpg" style="width: 90px; height: 70px;">
+          </div>
+        </td>
+        <td class="td_bs" th:text="${brereplyVO.brereplydate.substring(0, 10)}"></td>
+        <td class="td_bs">
+          <a th:href="@{|/brereply/brereply_update?brereplyno=${brereplyVO.brereplyno}|}" title="수정"><i class="bi bi-pencil-square"></i></a>
+          <span class="menu_devide"> |</span>
+          <a th:href="@{|/brereply/brereply_delete?brereplyno=${brereplyVO.brereplyno}|}" title="삭제"><i class="bi bi-trash3"></i></a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+</html>

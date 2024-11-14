@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html을 상속 -->
+
+<div layout:fragment="content">
+  <div class='title_line'> 대댓글 등록</div>
+  <form name="frm" th:object="${brereplyVO}" method="post" action="/brereply/brereply_create" enctype="multipart/form-data">
+    <input type="hidden" name="breplyno" th:value="${brereplyVO.breplyno}"/>
+
+    <!-- <div th:replace="~{errors::errorsFragment}"></div> -->
+
+    <div style="margin:5px auto; width: 50%;">
+      <input type="text" name="brereplycont" value="" autofocus="autofocus" class="form-control form-control-sm"
+        style="width: 100%;" th:field="*{brereplycont}" placeholder="내용 입력하세요">
+      <div th:if="${#fields.hasErrors('brereplycont')}" class="alert alert-danger" role="alert">
+        <div th:each="err : ${#lists.sort(#fields.errors('brereplycont'))}" th:text="${err}"></div>
+      </div>
+    </div>
+
+    <div style="margin:5px auto; width: 50%;">
+      <input type='file' class="form-control" name='fileMF' id='fileMF' 
+               value='' placeholder="파일 선택">
+    </div>
+  
+    <div style="margin:5px auto; width: 50%;">
+      <input type="password" name="brereplypasswd" value="" class="form-control form-control-sm" style="width: 100%;"
+        th:field="*{brereplypasswd}" placeholder="비밀번호를 입력해주세요">
+      <div th:if="${#fields.hasErrors('brereplypasswd')}" class="alert alert-danger" role="alert">
+        <div th:each="err : ${#lists.sort(#fields.errors('brereplypasswd'))}" th:text="${err}"></div>
+      </div>
+    </div>
+
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+      <!--<button type="button" onclick="location.href = './reply_list'" class="btn btn-secondary btn-sm">목록</button>>-->
+      <button type="button" th:onclick="|location.href='./brereply_list?brereplyno=${brereplyVO.brereplyno}'|" class="btn btn-secondary btn-sm">목록</button>
+    </div>
+  </form>
+
+  <!-- <div th:replace="~{cate/list_all_component::list_all_fragment}"></div> -->
+</div>
+
+</html>

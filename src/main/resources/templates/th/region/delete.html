@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <div id="panel_delete" style="padding: 10px 0px 10px 0px; width: 100%; text-align: center">
+      <form name="frm" th:object="${regionVO}" method="post" action="/region/delete">
+        <!-- hidden -->
+        <input type="hidden" name="regiono" th:value="${regionVO.regiono}" />
+        
+        <div class="msg_warning">지역을 삭제하면 복구 할 수 없습니다.</div>
+        [ <span th:text="${regionVO.regiono}" class="title_line_text"></span>  
+         ]
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+          <button type="button" th:attr="onclick=|location.href='/region/list_all'|" class="btn btn-secondary btn-sm">취소</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</html>

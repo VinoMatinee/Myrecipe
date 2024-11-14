@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span class="title_line_text">관리자 로그인</span>
+      </h1>
+
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item">
+          <a th:href="@{/manager/signin}">회원 가입</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+      </ol>
+    </div>
+    <!-- Single Page Header End -->
+    <script type="text/javascript" src="https://static.nid.naver.com/js/naveridlogin_js_sdk_2.0.0.js" charset="utf-8"></script>
+    <script>
+      window.onload = () => {
+        document.querySelector("#mid").addEventListener("keypress", (event) => {
+          // document.getElementById('passwd').addEventListener('keypress', (event) => {
+          if (event.key === "Enter") {
+            // ===: 타입까지 확인
+            document.getElementById("btn_checkID").focus();
+          }
+        });
+
+        document.querySelector("#mpasswd").addEventListener("keypress", (event) => {
+          // document.getElementById('passwd').addEventListener('keypress', (event) => {
+          if (event.key === "Enter") {
+            document.getElementById("btn_send").focus();
+          }
+        });
+      };
+
+      function send() {
+        // 회원 가입 처리
+        let mid = document.getElementById("mid");
+        let mid_msg = document.getElementById("mid_msg");
+
+        if (mid.value.trim().length == 0) {
+          mid_msg.innerHTML = "ID 입력은 필수 입니다. ID(이메일)는 3자이상 권장합니다.";
+          mid_msg.classList.add("span_warning"); // class 적용
+          mpasswd.focus();
+
+          return false; // 로그인 진행 중지
+        }
+
+        let mpasswd = document.getElementById("mpasswd");
+        let mpasswd_msg = document.getElementById("mpasswd_msg");
+
+        if (mpasswd.value.trim().length == 0) {
+          mpasswd_msg.innerHTML = "패스워드 입력은 필수 입니다. 패스워드는 8자이상 권장합니다.";
+          mpasswd_msg.classList.add("span_warning"); // class 적용
+          mpasswd.focus();
+
+          return false; // 로그인 진행 중지
+        }
+
+        document.getElementById("frm").submit(); // required="required" 작동 안됨.
+      }
+    </script>
+
+    <div class="menu_line"></div>
+
+    <div class="container-fluid py-5">
+      <div class="container py-5">
+        <div style="width: 30%; margin: 0px auto">
+          <form name="frm" id="frm" th:object="${managerVO}" method="post" action="/manager/login_manager">
+            <div>
+              <label for="mid">아이디(이메일)*</label>
+              <input type="text" name="mid" id="mid" value="manager" autofocus="autofocus" class="form-control fom-control-sm" style="width: 100%" />
+              <span id="mid_msg"></span>
+            </div>
+
+            <div class="form-group">
+              <label for="mpasswd">패스워드*</label>
+              <input
+                type="password"
+                name="mpasswd"
+                id="mpasswd"
+                value="1234"
+                required="required"
+                placeholder="패스워드"
+                class="form-control form-control-sm"
+                style="width: 100%"
+              />
+              <span id="mpasswd_msg"></span>
+            </div>
+
+            <div class="d-flex justify-content-center mt-3">
+              <button type="button" onclick="send();" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">
+                로그인
+              </button>
+              <button
+                type="button"
+                onclick="history.back();"
+                class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1"
+              >
+                취소
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

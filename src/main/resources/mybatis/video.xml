@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.video.VideoDAOInter">
+  <insert id="create" parameterType="dev.mvc.video.VideoVO">
+    INSERT INTO video (videono, videotitle, url, descripe,video_date,managerno)
+    VALUES (GPA_SEQ.NEXTVAL, #{videotitle}, 
+            #{url}, 
+            #{descripe},sysdate, #{managerno})
+</insert>
+  
+  <select id="readById" resultType="dev.mvc.video.VideoVO" parameterType="String">
+    SELECT MANAGERNO FROM MANAGER WHERE MID = #{mid}
+</select>
+  
+ <select id="list" parameterType="dev.mvc.video.VideoVO">
+  SELECT videono, videotitle, url, descripe,video_date,managerno
+  FROM video
+  ORDER BY videono ASC
+  </select>
+  
+  <delete id="delete" parameterType="dev.mvc.video.VideoVO">
+    DELETE FROM video WHERE videono=#{videono}
+  </delete>
+  
+  
+  <update id="update" parameterType="dev.mvc.video.VideoVO">
+    UPDATE video
+    SET videotitle = #{videotitle},
+    url = #{url},descripe = #{descripe}
+    WHERE videono = #{videono}
+    
+  </update>
+  
+  <!-- 조회 -->
+  <select id="read" resultType="dev.mvc.video.VideoVO" parameterType="int">
+    SELECT videono, videotitle, url, descripe,video_date,managerno
+    FROM video
+    WHERE videono = #{videono}
+  </select>
+  
+  
+   <select id="list_search_paging" resultType="dev.mvc.video.VideoVO" parameterType="Map">
+    SELECT videono, videotitle, url, descripe, video_date, managerno, MNAME, r
+    FROM (
+        SELECT videono, videotitle, url, descripe, video_date, managerno, MNAME, rownum as r
+        FROM (
+            SELECT v.videono, v.videotitle, v.url, v.descripe, v.video_date, v.managerno, m.MNAME
+            FROM video v
+            INNER JOIN MANAGER m ON v.managerno = m.MANAGERNO
+            <if test="word != null and word !=''">
+            WHERE UPPER(v.videotitle) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(v.descripe) LIKE '%' || UPPER(#{word}) || '%' 
+            </if>
+            ORDER BY v.videono ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+</select>
+  
+  <!--페이징 -->
+  <!--
+  <select id="list_search_paging" resultType="dev.mvc.video.VideoVO" parameterType="Map">
+    SELECT  videono, videotitle, url, descripe,video_date,managerno, r
+    FROM (
+        SELECT videono, videotitle, url, descripe,video_date,managerno, rownum as r
+        FROM (
+            SELECT videono, videotitle, url, descripe,video_date,managerno
+            FROM video
+            <if test="word != null and word !=''">
+            WHERE UPPER(videotitle) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(descripe) LIKE '%' || UPPER(#{word}) || '%' 
+            </if>
+            ORDER BY videono ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+-->
+  <!-- 검색된 코드 수 -->
+  <select id="list_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM video
+    <if test="word != null and word !=''">
+      WHERE UPPER(videotitle) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(descripe) LIKE '%' || UPPER(#{word}) || '%' 
+    </if>
+    ORDER BY videono ASC
+  </select>
+  
+  <select id="joinmanager" resultType="dev.mvc.video.VideoVO" parameterType="int">
+     SELECT 
+            v.videotitle,
+            m.MNAME
+        FROM 
+            video v
+        INNER JOIN 
+            MANAGER m
+        ON 
+            v.managerno = m.MANAGERNO
+        WHERE 
+            v.managerno = #{managerno};
+    
+  </select>
+  
+</mapper>
+
+
+
+
+
+
+
+
+
+

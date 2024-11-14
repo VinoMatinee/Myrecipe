@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>전체 글 목록</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /board/list_search_component.html 파일의 list_search_fragment import -->
+        <div th:replace="~{th/board/list_all_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+
+        <div class="table-responsive">
+          <table class="table">
+            <colgroup>
+              <col style="width: 10%" />
+              <col style="width: 25%" />
+              <col style="width: 45%" />
+              <col style="width: 10%" />
+              <col style="width: 10%" />
+            </colgroup>
+            <thead>
+              <tr>
+                <th class="th_bs text-center">파일</th>
+                <th class="th_bs text-center">제목</th>
+                <th class="th_bs text-center">내용</th>
+                <th class="th_bs text-center">등록일</th>
+                <th class="th_bs text-center">출력모드</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                th:each="boardVO, status:${list}"
+                th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}'|"
+                style="cursor: pointer; height: 90px"
+              >
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <div th:if="${boardVO.bphoto.endsWith('jpg') || boardVO.bphoto.endsWith('png')  || boardVO.bphoto.endsWith('gif')}">
+                    <img th:src="@{|/board/storage/${boardVO.bthumb}|}" style="width: 120px; height: 90px" />
+                  </div>
+
+                  <div
+                    th:if="${((boardVO.bphoto.endsWith('jpg') || boardVO.bphoto.endsWith('png')  || boardVO.bphoto.endsWith('gif')) == false) && (boardVO.bsize > 0)}"
+                  >
+                    <span th:text="${boardVO.bphoto}"></span>
+                  </div>
+
+                  <div th:if="${boardVO.bsize == 0}">
+                    <img src="/board/images/aaa.jpg" style="width: 120px; height: 90px" />
+                  </div>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="${boardVO.btitle}" style="font-weight: bold"></span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:if="${boardVO.bcontent.length() > 160 }" th:text="|${boardVO.bcontent.substring(0, 160) }...|"></span>
+                  <span th:if="${boardVO.bcontent.length() <= 160 }" th:text="|${boardVO.bcontent}|"></span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="|&nbsp;${boardVO.bdate.substring(0, 10)}|"></span>
+                </td>
+                <td class="td_basic" style="vertical-align: middle; text-align: center">
+                  <span th:text="${boardVO.bvisible}" style="font-weight: bold"></span>
+                </td>
+              </tr>
+              <tr th:if="${list.size() == 0}">
+                <td colspan="2" style="text-align: center">관련 글이 등록되지 않았습니다.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- 페이지 버튼 목록 출력 시작 -->
+        <div class="bottom_menu" th:utext="${paging_all}"></div>
+        <!-- 페이지 버튼 목록 출력 종료 -->
+      </div>
+    </div>
+  </div>
+</html>

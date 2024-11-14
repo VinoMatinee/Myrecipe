@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.week.WeekDAOInter">
+
+  <!-- Create -->
+  <insert id="create" parameterType="dev.mvc.week.WeekVO">
+    INSERT INTO WEEK(
+        weekno,
+        accountno,
+        weekdates,
+
+        monbreakfast,
+        tuebreakfast,
+        wedbreakfast,
+        thubreakfast,
+        fribreakfast,
+        satbreakfast,
+        sunbreakfast,
+
+        monlunch,
+        tuelunch,
+        wedlunch,
+        thulunch,
+        frilunch,
+        satlunch,
+        sunlunch,
+
+        mondinner,
+        tuedinner,
+        weddinner,
+        thudinner,
+        fridinner,
+        satdinner,
+        sundinner,
+
+        moncal,
+        tuecal,
+        wedcal,
+        thucal,
+        frical,
+        satcal,
+        suncal,
+
+        wdate
+
+    ) VALUES (
+        WEEK_SEQ.NEXTVAL,
+        #{accountno},
+        #{weekdates},
+
+        #{monbreakfast},
+        #{tuebreakfast},
+        #{wedbreakfast},
+        #{thubreakfast},
+        #{fribreakfast},
+        #{satbreakfast},
+        #{sunbreakfast},
+
+        #{monlunch},
+        #{tuelunch},
+        #{wedlunch},
+        #{thulunch},
+        #{frilunch},
+        #{satlunch},
+        #{sunlunch},
+
+        #{mondinner},
+        #{tuedinner},
+        #{weddinner},
+        #{thudinner},
+        #{fridinner},
+        #{satdinner},
+        #{sundinner},
+
+        #{moncal},
+        #{tuecal},
+        #{wedcal},
+        #{thucal},
+        #{frical},
+        #{satcal},
+        #{suncal},
+
+        sysdate
+    )
+  </insert>
+
+  <!-- list_wds -->
+  <select id="list_wds" parameterType="int" resultType="dev.mvc.week.WeekVO">
+    SELECT weekdates
+    FROM WEEK
+    WHERE ACCOUNTNO = #{accountno}
+  </select>
+
+  <!-- 리스트 조회 -->
+  <select id="list_all" resultType="dev.mvc.week.WeekVO" parameterType="HashMap">
+    SELECT *
+    FROM WEEK
+    WHERE ACCOUNTNO = #{accountno} AND WEEKDATES= #{weekdates}
+    ORDER BY weekno desc
+  </select>
+
+    <!-- 삭제 기능 -->
+  <delete id="delete" parameterType="HashMap">
+    DELETE FROM WEEK
+    WHERE ACCOUNTNO = #{accountno} AND WEEKDATES = #{weekdates}
+  </delete>
+
+  <update id="update" parameterType="dev.mvc.week.WeekVO">
+    UPDATE week
+    SET monbreakfast = #{monbreakfast},
+        tuebreakfast = #{tuebreakfast},
+        wedbreakfast = #{wedbreakfast},
+        thubreakfast = #{thubreakfast},
+        fribreakfast = #{fribreakfast},
+        satbreakfast = #{satbreakfast},
+        sunbreakfast = #{sunbreakfast},
+
+        monlunch = #{monlunch},
+        tuelunch = #{tuelunch},
+        wedlunch = #{wedlunch},
+        thulunch = #{thulunch},
+        frilunch = #{frilunch},
+        satlunch = #{satlunch},
+        sunlunch = #{sunlunch},
+
+        mondinner = #{mondinner},
+        tuedinner = #{tuedinner},
+        weddinner = #{weddinner},
+        thudinner = #{thudinner},
+        fridinner = #{fridinner},
+        satdinner = #{satdinner},
+        sundinner = #{sundinner},
+
+        moncal = #{moncal},
+        tuecal = #{tuecal},
+        wedcal = #{wedcal},
+        thucal = #{thucal},
+        frical = #{frical},
+        satcal = #{satcal},
+        suncal = #{suncal},
+
+        wdate = sysdate
+    WHERE ACCOUNTNO = #{accountno} AND WEEKDATES= #{weekdates}
+  </update>
+
+</mapper>

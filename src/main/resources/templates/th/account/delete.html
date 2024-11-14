@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+
+  <div layout:fragment="content">
+    <script>
+      window.onload = () => {};
+
+      function send() {
+        // 삭제 처리
+        document.getElementById("frm").submit(); // required="required" 작동 안됨.
+      }
+    </script>
+
+    <!-- Header -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>회원 정보 삭제 > <span th:text="@{|${accountVO.aname} (${accountVO.aid})|}"></span></span>
+      </h1>
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+        <li class="breadcrumb-item"><a href="./list">목록</a></li>
+      </ol>
+    </div>
+
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <div style="width: 60%; margin: 0px auto">
+          <form name="frm" id="frm" th:object="${accountVO}" method="post" action="/account/delete_account" class="text-center">
+            <input type="hidden" name="accountno" th:value="${accountVO.accountno}" />
+
+            <p class="text-danger">회원 정보는 삭제하면 복구 할 수 없습니다.<br />그래도 삭제하시겠습니까?</p>
+            <p>회원 이름: <span th:text="${accountVO.aname}"></span></p>
+
+            <div class="d-flex justify-content-center mt-3">
+              <button type="button" onclick="send();" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">
+                삭제
+              </button>
+              <button
+                type="button"
+                onclick="history.back();"
+                class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1"
+              >
+                취소
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

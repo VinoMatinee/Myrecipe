@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <head>
+    <style>
+      .highlight {
+        color: blue;
+        cursor: pointer;
+      }
+
+      .tooltip {
+        display: none;
+      }
+
+      a:hover {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- 단어장 스크립트 -->
+    
+
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        
+       
+      </h1>
+
+      <!-- <ol class="breadcrumb justify-content-center mb-0">
+    <li th:href="@{|/board/create?crudcateno=${boardVO.crudcateno}|}"><i class="bi bi-pencil-square" style="font-size: 1.5rem;"></i></li>
+    <li th:href="@{|/board/update_board?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}|}"><i class="bi bi-eraser" style="font-size: 1.5rem;"></i></li>
+    <li th:href="@{|./update_file?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}|}"><i class="bi bi-image" style="font-size: 1.5rem;"></i></li>
+    
+    <li th:href="@{|/board/youtube?crudcateno=${boardVO.crudcateno}&boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}|}"><i class="bi bi-youtube" style="font-size: 1.5rem;"></i></li>
+    
+    <li
+      th:href="@{|./delete?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}&crudcateno=${boardVO.crudcateno}|}"><i class="bi bi-trash3" style="font-size: 1.5rem;"></i></li>
+    
+    <li th:href="@{|/vocabulary/create|}"><i class="bi bi-wordpress" style="font-size: 1.5rem;"></i></li>
+    
+    <li onclick="addBookmark()"><i class="bi bi-bookmark-star" style="font-size: 1.5rem;"></i></li>
+    
+    <li onclick="deleteBookmark()"><i class="bi bi-bookmark-x" style="font-size: 1.5rem; color: red;"></i></li>
+    
+    <li href="javascript:location.reload();"><i class="bi bi-arrow-clockwise" style="font-size: 1.5rem;"></i></li>
+    
+    <li th:href="@{|./list_cno?crudcateno=${crudcateVO.crudcateno}&word=${word}&now_page=${now_page}|}"><i class="bi bi-list-columns-reverse" style="font-size: 1.5rem;"></i></li>
+  </ol>
+  <ol class="breadcrumb justify-content-center mb-0" th:unless="${session.managerno >= 1 || session.accountno == boardVO.accountno}">
+    <li href="javascript:location.reload();"><i class="bi bi-arrow-clockwise" style="font-size: 1.5rem;"></i></li>
+    <li th:href="@{|./list_cno?crudcateno=${crudcateVO.crudcateno}&word=${word}&now_page=${now_page}|}"><i class="bi bi-list-columns-reverse" style="font-size: 1.5rem;"></i></li>
+  </ol> -->
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <input type="hidden" name="foodno" th:value="${param.foodno}" />
+        <input type="hidden" id="accountNo" th:value="${session.accountno}" />
+
+        <aside class="aside_right">
+          <a th:href="@{|/regionfood/create?foodno=${regionfoodVO.foodno}|}"><i class="bi bi-pencil-square" style="font-size: 1.5rem"></i></a>
+          
+          <a th:href="@{|/regionfood/update?foodno=${regionfoodVO.foodno}&word=${word}&now_page=${now_page}|}"
+            ><i class="bi bi-eraser" style="font-size: 1.5rem"></i
+          ></a>
+          <a th:href="@{|./update_file?foodno=${regionfoodVO.foodno}&word=${word}&now_page=${now_page}|}"
+            ><i class="bi bi-image" style="font-size: 1.5rem"></i
+          ></a>
+          
+          <a th:href="@{|./delete?foodno=${regionfoodVO.foodno}|}"
+            ><i class="bi bi-trash3" style="font-size: 1.5rem"></i
+          ></a>
+         
+
+ 
+          <a href="javascript:location.reload();"><i class="bi bi-arrow-clockwise" style="font-size: 1.5rem"></i></a>
+
+          
+        </aside>
+
+        <aside class="aside_right" >
+          <a href="javascript:location.reload();"><i class="bi bi-arrow-clockwise" style="font-size: 1.5rem"></i></a>
+         
+        </aside>
+
+        <!-- 게시글 내용 -->
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="border rounded">
+              <div th:if="${regionfoodVO.foodimg_url.endsWith('jpg') || regionfoodVO.foodimg_url.endsWith('png')  || regionfoodVO.foodimg_url.endsWith('gif')}">
+                <img th:src="@{|/regionfood/storage/${regionfoodVO.foodimg_urlsaved}|}" style="width: 100%" />
+              </div>
+              <div th:if="${regionfoodVO.fsize == 0}">
+                <img src="/board/images/aaa.jpg" style="width: 100%" />
+              </div>
+              <div
+                th:if="${((regionfoodVO.foodimg_url.endsWith('jpg') or regionfoodVO.foodimg_url.endsWith('png')  or regionfoodVO.foodimg_url.endsWith('gif')) == false) and (regionfoodVO.fsize > 0)}"
+              >
+                <div>
+                  <span th:text="${regionfoodVO.foodimg_url}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+             
+             
+            <div style="white-space: pre-wrap"><span th:utext="${content}"></span></div>
+
+            <ul class="mt-4">
+              <span class="mb-3" style="font-size: 1.5em; font-weight: bold" th:text="${regionfoodVO.foodtitle}"></span>
+              <li class="li_none" th:if="${regionfoodVO.fsize > 0}">
+                <span>첨부 파일: </span>
+                <a
+                  th:href="@{|/download?dir=/board/storage&filename=${regionfoodVO.foodimg_urlsaved}&downname=${regionfoodVO.foodimg_url}|}"
+                  th:text="|${regionfoodVO.foodimg_url}|"
+                ></a>
+                <span th:text="|(${regionfoodVO.fsize_label})|"></span>
+              </li>
+            </ul>
+
+<div>
+  <ul class="mt-4">
+    <li>
+  <span >
+    재료: 
+    <a th:text="|(${regionfoodVO.recipelist})|"></a>
+  </span>
+  </li>
+  <li>
+  <span >
+    필요 도구: 
+    <a th:text="|(${regionfoodVO.cook_tool})|"></a>
+  </span>
+  </li>
+  <li>
+  <span >
+    난이도: 
+    
+              <span th:each="star : ${#numbers.sequence(1, regionfoodVO.difficulty)}">
+                <i class="fa fa-star text-secondary"></i>
+              </span>
+            
+    
+  </span>
+  </li>
+   <li>
+  <span >
+    조리시간: 
+    <a th:text="|(${regionfoodVO.cooktime})|"></a>
+    시간
+  </span>
+  </li>
+</ul>
+</div>
+            <!-- <div class="input-group quantity mb-5" style="width: 100px">
+              <div class="input-group-btn">
+                <button class="btn btn-sm btn-minus rounded-circle bg-light border">
+                  <i class="fa fa-minus"></i>
+                </button>
+              </div>
+              <input type="text" class="form-control form-control-sm text-center border-0" value="1" />
+              <div class="input-group-btn">
+                <button class="btn btn-sm btn-plus rounded-circle bg-light border">
+                  <i class="fa fa-plus"></i>
+                </button>
+              </div>
+            </div>
+            <a href="#" class="btn border border-secondary rounded-pill px-4 py-2 mb-4 text-primary"
+              ><i class="fa fa-shopping-bag me-2 text-primary"></i> Add to cart</a
+            > -->
+          </div>
+        </div>
+        
+              </div>
+        <!-- 게시글 내용 끝-->
+
+        
+
+        
+        <div style="width: 100%; margin: 0px auto; clear: both">
+          
+          
+          <br />
+          
+      </div>
+    </div>
+  </div>
+</html>

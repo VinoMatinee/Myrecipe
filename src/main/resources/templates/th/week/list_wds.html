@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <div layout:fragment="content">
+    <div class="title_line"></div>
+    <div class="menu_line"></div>
+    <h1>Week Dates</h1>
+    <form action="/week/list_all" method="get">
+      <input type="text" name="accountno" th:value="${accountno}" />
+      <select id="weekdates" name="weekdates">
+        <option value="">-- 주간을 선택해주세요 --</option>
+        <option th:each="weekVO : ${weekList}" th:value="${weekVO.weekdates}" th:text="${weekVO.weekdates}"></option>
+      </select>
+      <input type="submit" value="선택" />
+    </form>
+  </div>
+</html>

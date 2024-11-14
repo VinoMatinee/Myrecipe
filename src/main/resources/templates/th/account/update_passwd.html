@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <!-- Header start -->
+  <div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">
+      <span class="title_line_text">비밀번호 변경</span>
+    </h1>
+
+    <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a th:href="@{/account/signin}">회원가입</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a th:href="@{/account/find_passwd_form}">비밀번호 찾기</a>
+      </li>
+    </ol>
+  </div>
+  <!-- Single Page Header End -->
+  <div class="container-fluid fruite py-5">
+    <div class="container py-5">
+  <div class="message">
+    <fieldset class="fieldset_basic">
+      <ul>
+        <li th:switch="${code}" class="li_none">
+          <div th:case="find_success">
+            <div class="center-box">
+            <span class="span_success" th:utext="'비밀번호 변경이 완료되었습니다. <br>변경된 비밀번호로 로그인 해주세요'"></span><br>
+            </div>
+            <div class="d-flex justify-content-center mt-3">
+            <button type='button'
+                         th:attr="onclick=|location.href='/account/login'|" 
+                         class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">로그인</button>
+                         </div>
+                         
+          
+          </div>
+          
+          <div th:case="find_passwd_fail">
+            <span class="span_fail">기존 비밀번호가 일치하지 않습니다. 다시 시도해주세요.</span><br>
+            <button type='button'
+                         onclick="history.back()"
+                         class="btn btn-primary btn-sm">다시 시도</button>
+          </div>
+          
+
+        </li>
+      </ul>
+    </fieldset>
+  </div>
+</div>
+</html>
+
+

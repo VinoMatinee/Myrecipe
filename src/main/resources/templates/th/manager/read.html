@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+
+<div layout:fragment="content">
+  <script>
+    window.onload = () => {
+      document.querySelector('#aname').addEventListener('keypress', (event) => {
+      // document.getElementById('passwd').addEventListener('keypress', (event) => {
+        if(event.key === 'Enter') {
+          document.getElementById('btn_send').focus();
+        }
+      });     
+   }
+    
+    function send() { // 회원 가입 처리
+      let mname = document.getElementById('mname');
+      let mname_msg = document.getElementById('mname_msg');
+  
+      if (mname.value.length == 0) {
+        mname_msg.innerHTML= '이름 입력은 필수입니다.';
+        mname_msg.classList.add('span_warning');    // class 적용
+        mname.focus();
+  
+        return false;  // 회원 가입 진행 중지
+      }
+  
+      document.getElementById('frm').submit(); // required="required" 작동 안됨.
+    }    
+  </script>
+
+  <div class="title_line">회원 정보 조회 및 수정(*: 필수) > <span th:text="@{|${managerVO.mname}|}"></span></div>
+  <aside class="aside_right">
+    <a href="javascript:location.reload();">새로고침</a>
+    <span class='menu_divide' >│</span> 
+    <a href='./create'>회원 가입</a>
+    <span class='menu_divide' >│</span> 
+    <a href='./list'>목록</a>
+  </aside> 
+
+  <div class='menu_line'></div>
+  
+  <div style="width: 60%; margin: 0px auto ">
+    <form name="frm" id="frm" th:object="${managerVO}" method="post" action="./update_manager">
+      <input type="hidden" name="managerno" th:value="${managerVO.managerno}">
+      
+   
+      
+      <div class="form-group">
+        <label for="mname">성명*</label>
+        <input type='text' name='mname' id='mname' th:value='${managerVO.mname}' required="required" 
+                   placeholder="성명" class="form-control form-control-sm" style="width: 30%;">
+        <span id='mname_msg'></span>
+      </div>   
+  
+      <div class="content_body_bottom">
+        <button type="button" onclick="send();" class="btn btn-secondary btn-sm">저장</button>
+        <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+      </div>
+
+
+    </form>
+  </div>
+    
+</div>
+</html>
+

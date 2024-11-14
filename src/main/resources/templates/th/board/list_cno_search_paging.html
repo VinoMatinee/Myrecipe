@@ -1,0 +1,82 @@
+span<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span th:text="${crudcateVO.name}" class="title_line_text"></span> > <span th:text="${crudcateVO.namesub}" class="title_line_text"></span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item" th:if="${session.accountno >= 0} or ${session.managerno >= 0}">
+          <a th:href="@{|/board/create?crudcateno=${crudcateVO.crudcateno}|}">등록</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+
+        <li class="breadcrumb-item">
+          <a th:href="@{|./list_cno?crudcateno=${crudcateVO.crudcateno}&word=${word}&now_page=${now_page}|}">목록</a>
+        </li>
+      </ol>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /board/list_search_component.html 파일의 list_search_fragment import -->
+        <div th:replace="~{th/board/list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+
+        <!-- Grid start-->
+        <div class="row g-4 justify-content-center">
+          <div
+            class="col-md-6 col-lg-6 col-xl-4"
+            th:if="${list.size() > 0}"
+            th:each="boardVO, status:${list}"
+            th:attr="onclick=|location.href='/board/read?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}'|"
+          >
+            <div class="rounded position-relative fruite-item">
+              <div class="fruite-img">
+                <div th:if="${boardVO.bphoto.endsWith('jpg') or boardVO.bphoto.endsWith('png')  or boardVO.bphoto.endsWith('gif')}">
+                  <img th:src="@{|/board/storage/${boardVO.bthumb}|}" class="img-fluid w-100 rounded-top" style="width: 100%; height: 300px" />
+                </div>
+
+                <div
+                  th:if="${((boardVO.bphoto.endsWith('jpg') or boardVO.bphoto.endsWith('png')  or boardVO.bphoto.endsWith('gif')) == false) and (boardVO.bsize > 0)}"
+                  class="img-fluid w-100 rounded-top"
+                >
+                  <span th:text="${boardVO.bphoto}"></span>
+                </div>
+                <div th:if="${boardVO.bsize == 0}">
+                  <img src="/board/images/aaa.jpg" class="img-fluid w-100 rounded-top" style="width: 100%; height: 300px" />
+                </div>
+              </div>
+              <div
+                class="text-white bg-secondary px-3 py-1 rounded position-absolute"
+                style="top: 10px; left: 10px"
+                th:text="${boardVO.btitle}"
+              ></div>
+              <div class="p-4 border border-secondary border-top-0 rounded-bottom">
+                <h4 th:text="${boardVO.btitle}"></h4>
+                <span th:if="${boardVO.bcontent.length() > 30 }" th:text="|${boardVO.bcontent.substring(0, 30) }...|"></span>
+                <span th:if="${boardVO.bcontent.length() <= 30 }" th:text="|${boardVO.bcontent}|"></span>
+                <div class="d-flex justify-content-between flex-lg-wrap"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- </div>
+    </div> -->
+
+        <!-- Paging button start -->
+        <div class="bottom_menu" th:utext="${paging}"></div>
+      </div>
+    </div>
+  </div>
+</html>

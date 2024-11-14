@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.breply.BreplyDAOInter">
+
+  <!-- 댓글 입력 -->
+  <insert id="replycreate" parameterType="dev.mvc.breply.BreplyVO">
+    INSERT INTO breply(BREPLYNO, BREPLYCONT, BREPLYIMG, BREPLYSAVED, BREPLYTHUMB, BREPLYSIZE, BREPLYDATE, BREPLYPASSWD, boardno, accountno, managerno)
+    VALUES(breply_seq.nextval, #{breplycont}, #{breplyimg}, #{breplysaved}, #{breplythumb}, #{breplysize}, sysdate, #{breplypasswd}, #{boardno}, #{accountno}, #{managerno})
+  </insert>
+
+  <!-- 댓글 목록 -->
+  <select id="reply_list" resultType="dev.mvc.breply.BreplyMemberVO" parameterType="int">
+    SELECT 
+    m.mid AS id, r.breplyno, r.boardno, r.managerno AS entityno, r.breplycont, r.breplydate, r.breplyimg, r.breplythumb, 'manager' AS entity_type
+    FROM manager m
+    JOIN breply r ON m.managerno = r.managerno
+    WHERE r.managerno &gt; 0 AND r.boardno = #{boardno}
+    UNION ALL
+    SELECT a.aid AS id, r.breplyno, r.boardno, r.accountno AS entityno, r.breplycont, r.breplydate, r.breplyimg, r.breplythumb, 'account' AS entity_type
+    FROM account a
+    JOIN breply r ON a.accountno = r.accountno
+    WHERE r.accountno &gt; 0 AND r.boardno = #{boardno}
+    ORDER BY breplyno DESC
+  </select>
+
+  <!-- 300건 댓글 목록 -->
+  <select id="reply_list_300" resultType="dev.mvc.breply.BreplyMemberVO" parameterType="int">
+    SELECT 
+    m.mid AS id, r.breplyno, r.boardno, r.managerno AS entityno, r.breplycont, r.breplydate, r.breplythumb,'manager' AS entity_type
+    FROM manager m
+    JOIN breply r ON m.managerno = r.managerno
+    WHERE r.managerno &gt; 0 AND r.boardno = #{boardno}
+    UNION ALL
+    SELECT a.aid AS id, r.breplyno, r.boardno, r.accountno AS entityno, r.breplycont, r.breplydate, r.breplythumb,'account' AS entity_type
+    FROM account a
+    JOIN breply r ON a.accountno = r.accountno
+    WHERE r.accountno &gt; 0 AND r.boardno = #{boardno}
+    AND ROWNUM &lt; 300
+    ORDER BY breplyno DESC
+  </select>
+
+  <!-- 댓글 읽기 -->
+  <select id="read" resultType="dev.mvc.breply.BreplyVO" parameterType="int">
+    SELECT BREPLYNO, BREPLYCONT, BREPLYIMG, BREPLYSAVED, BREPLYTHUMB, BREPLYSIZE, BREPLYDATE, BREPLYPASSWD
+    FROM breply
+    WHERE breplyno = #{breplyno}
+  </select>
+  
+  <!-- 댓글 수정 -->
+  <update id="update" parameterType="dev.mvc.breply.BreplyVO">
+    UPDATE BREPLY
+    SET BREPLYCONT = #{breplycont}, BREPLYIMG = #{breplyimg}, BREPLYSAVED = #{breplysaved}, BREPLYthumb = #{breplythumb}, BREPLYSIZE = #{breplysize}, BREPLYDATE = sysdate
+    WHERE BREPLYNO = #{breplyno}
+  </update>
+
+  <!-- 댓글 삭제 -->
+  <delete id="delete" parameterType="int">
+    delete BREPLY
+    WHERE BREPLYNO = #{breplyno}
+  </delete>
+
+  <!-- 패스워드 비교 -->
+  <select id="password_check" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt 
+    FROM breply
+    WHERE breplyno = #{breplyno} AND BREPLYPASSWD = #{breplypasswd}
+  </select>
+
+</mapper>

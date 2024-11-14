@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+    > 삭제
+  </div>
+  
+  <aside class="aside_right">
+    <a href="/breply/create">댓글 등록</a>
+    <span class='menu_divide' >│</span>
+    <a href="/breply/list">댓글 목록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/breply/update/${breplyno}|}">댓글 수정</a>
+    <span class='menu_divide' >│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside>  
+  
+  <div class='menu_line'></div>
+  
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <!--<div th:if="${breplyVO.breplyimg.endsWith('jpg') or breplyVO.breplyimg.endsWith('png') or breplyVO.breplyimg.endsWith('gif')}"
+             style='text-align: center; width: 50%; float: left;'>
+        <img th:src="@{|/breply/storage/${breplyVO.breplysaved}|}" style="width: 90%;">
+        </div>
+
+        <div th:if="${breplyVO.size1 == 0}" style='text-align: center; width: 50%; float: left;'>
+          <img src="/breply/images/none3.png" style="width: 90%;">
+        </div>-->
+
+        <DIV style='text-align: left; width: 47%; float: left;'>
+          <FORM name='frm' method='POST' action='/breply/delete'>
+            <!--<input type="hidden" name="cateno" th:value="${cateVO.cateno }">-->
+            <input type="hidden" name="breplyno" th:value="${breplyVO.breplyno}">
+                
+            <br><br>
+            <div style='margin-top: 20px; clear: both;'>
+              <span style="color: #FF0000; font-weight: bold;">삭제를 진행 하시겠습니까? 삭제하시면 복구 할 수 없습니다.</span>
+              <br><br>
+              <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+              <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+            </div>  
+          </FORM>
+        </DIV>
+      </li>
+    </ul>
+  </fieldset>
+
+</div>
+
+</html>

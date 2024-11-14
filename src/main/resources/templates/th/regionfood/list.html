@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+
+
+<html layout:decorate="~{th/layout}"> 
+<head>
+  <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+</head>
+<div layout:fragment="content">
+  <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>지역 음식 리스트</span>
+        
+      </h1>
+      
+      <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a th:href="@{/regionfood/create(regiono=${regionfoodVO.regiono})}">등록</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+    </ol>
+    </div>
+    <!-- Header End -->
+    
+    <div class='menu_line'></div>
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+
+<div th:fragment="list">
+  
+   <input type="hidden" name="now_page" th:value="${now_page}" />
+    <input type="hidden" name="word" th:value="${word}" />
+<div th:replace="~{th/regionfood/list_cno_search_component::list_cno_search_fragment}"></div>
+ 
+   <br />
+      <br />
+  
+       <div class="table-responsive">
+   <table class="table" >
+    <colgroup>
+      <col style='width: 12.5%;'/>
+      <col style='width: 12.5%;'/>
+      <col style='width: 12.5%;'/>
+      <col style='width: 12.5%;'/>
+      <col style='width: 12.5%;'/>
+      <col style='width: 12.5%;'/>
+      <col style='width: 12.5%;'/>
+      <col style='width: 12.5%;'/>
+    </colgroup>
+    <thead>
+    <tr>
+      <th class='th_bs'>지역음식 이름</th>
+      <th class='th_bs'>지역</th>
+      
+      <th class='th_bs'>음식 사진</th>
+      <th class='th_bs'>요리 재료 목록</th>
+      <th class='th_bs'>필요 조리 도구</th>
+      <th class='th_bs'>난이도 </th>
+      <th class='th_bs'>조리시간</th>
+      
+      <th class='th_bs'>수정|삭제</th>
+      <th class='th_bs'> </th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr th:each="regionfoodVO, status:${alist}" th:attr="onclick=|location.href='/regionfood/read?foodno=${regionfoodVO.foodno}'|">
+      
+       
+         <td class='td_basic' style='height: 150px;' th:utext="${regionfoodVO.foodtitle}"></td>
+       <td class='td_basic' th:text="${regionfoodVO.regiono}"></td>
+              <td class='td_basic'>
+                <div th:if="${regionfoodVO.foodimg_url.endsWith('jpg') || regionfoodVO.foodimg_url.endsWith('png')  || regionfoodVO.foodimg_url.endsWith('gif')}">
+          <img th:src="@{|/board/storage/${regionfoodVO.fthumb}|}" style="width: 120px; height: 90px;">
+        </div>
+
+        <div th:if="${((regionfoodVO.foodimg_url.endsWith('jpg') || regionfoodVO.foodimg_url.endsWith('png')  || regionfoodVO.foodimg_url.endsWith('gif')) == false) && (regionfoodVO.fsize > 0)}">
+          <span th:text="${regionfoodVO.foodimg_url}"></span>
+        </div>
+
+        <div th:if="${regionfoodVO.fsize == 0}">
+          <img src="/board/images/aaa.jpg" style="width: 120px; height: 90px;">
+        </div>
+        
+                
+              </td>
+       
+       
+              <td class='td_basic' th:text="${regionfoodVO.recipelist}"></td>
+       
+              <td class='td_basic' th:text="${regionfoodVO.cook_tool}"></td>
+       
+              <td class='td_basic' th:text="${regionfoodVO.difficulty}"></td>
+                     
+              <td class='td_basic' th:text="${regionfoodVO.cooktime }"></td>
+       
+       
+      <td class='td_basic'>
+        <a th:href="@{/region/update(regiono=${regionfoodVO.foodno})}">
+        <img src='/member/images/update.png' title='수정' class="icon"></a>
+        </a>
+        <a th:href="@{/region/delete(regiono=${regionfoodVO.foodno})}">
+    <img src='/member/images/delete.png' title='삭제' class="icon">
+</a>
+      </td>
+      
+    </tr>
+    </tbody>
+  </table>
+   </div>
+  <div class='bottom_menu'>
+      <div class="bottom_menu" th:utext="${paging}"></div>
+  </div>
+  </div>
+</div>
+</div>
+</div>
+</html>
+
+

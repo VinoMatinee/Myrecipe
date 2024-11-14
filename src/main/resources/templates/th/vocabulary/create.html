@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+<!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class="title_line">단어장 등록</div>
+  <form name="frm" th:object="${vocabularyVO}" method="post" action="/vocabulary/create">
+    <input type="hidden" name = "managerno" th:value="${session.managerno}">
+    <div style="margin: 5px auto; width: 50%">
+      <input type="text" name="voca" autofocus="autofocus" class="form-control fom-control-sm" style="width: 100%"
+        placeholder="등록할 단어를 입력하세요." />
+      <br>
+      <input type="text" name="mean" autofocus="autofocus" class="form-control fom-control-sm" style="width: 100%"
+        placeholder="단어의 뜻을 입력해주세요." />
+    </div>
+
+    <div class="content_body_bottom">
+      <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+      <button type="button"
+        onclick="location.href='./list_cno?crudcateno=' + document.querySelector('[name=crudcateno]').value"
+        class="btn btn-secondary btn-sm">
+        목록
+      </button>
+    </div>
+    </form>
+
+</html>

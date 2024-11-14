@@ -1,0 +1,63 @@
+  <!DOCTYPE html>
+  
+<html layout:decorate="~{th/layout}"> 
+    <head>
+      <meta charset="UTF-8"> 
+<meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, width=device-width" />
+    <link href="/css/style.css" rel="Stylesheet" type="text/css">
+    
+</head>
+    <!-- layout.html 상속-->
+    
+    <div layout:fragment="content">
+      <div class="title_line">별점 수정</div>
+  
+      <!-- /crudcate/list_search_component 로 교체 -->
+      <div th:replace="~{crudcate/list_search_component::list_search_fragment}"></div>
+      <div class="menu_line"></div>
+  
+      <form name="frm" th:object="${gpaVO}" method="post" action="update" enctype="multipart/form-data">
+        <!-- hidden -->
+        <input type="hidden" name="gpano" th:value="${gpaVO.gpano}" />
+        
+  
+       
+        
+        
+        <div style="margin: 5px auto; width: 50%">
+          <div>
+            <span id="starspan" class="text-bold">수정할 별점을 선택해주세요</span>
+            <fieldset class="fieldset_basic" id="starscore">
+    <input type="radio" name="reviewStar" value="5" id="rate1"><label for="rate1">★</label>
+    <input type="radio" name="reviewStar" value="4" id="rate2"><label for="rate2">★</label>
+    <input type="radio" name="reviewStar" value="3" id="rate3"><label for="rate3">★</label>
+    <input type="radio" name="reviewStar" value="2" id="rate4"><label for="rate4">★</label>
+    <input type="radio" name="reviewStar" value="1" id="rate5"><label for="rate5">★</label>
+</fieldset>
+
+            </div>
+            <div th:if="${#fields.hasErrors('gpascore')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+                <c:forEach items="${#fields.errors('gpascore')}" var="err">
+                    <div><c:out value="${err}" /></div>
+                </c:forEach>
+            </div>
+        </div>
+  
+        
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">수정</button>
+          <button
+            type="button"
+            th:attr="onclick=|location.href='/gpa/list'|"
+            class="btn btn-secondary btn-sm"
+          >
+            취소
+          </button>
+        </div>
+      </form>
+  </div>
+      <br />
+      <!-- /crudcate/list_all_component 로 교체 -->
+      <div th:replace="~{crudcate/list_all_component::list_all_fragment}"></div>
+    </div>
+  </html>

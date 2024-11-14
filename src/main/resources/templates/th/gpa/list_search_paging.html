@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+   <table class="table table-hover">
+    <colgroup>
+     <col style='width: 5%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      <col style='width: 20%;'/>
+      
+    </colgroup>
+    <thead>
+    <tr>
+      <th class='th_bs'>별점 점수</th>
+      <th class='th_bs'>등록한 유저</th>
+      <th class='th_bs'>게시판</th>
+      <th class='th_bs'>등록일</th>
+      
+      <th class='th_bs'>수정|삭제</th>
+      <th class='th_bs'> </th>
+    </tr>
+    </thead>
+    <tr th:each="gpaVO, status:${list}">
+      
+       <fieldset>
+         
+        <td class='td_basic'>
+          <span th:each="star : ${#numbers.sequence(1, gpaVO.gpascore)}" name="reviewStar" id="starfont">★</span>
+        </td>
+         <td class='td_basic' th:text="${gpaVO.accountno}"></td>
+      
+              <td class='td_basic' th:text="${gpaVO.boardno}"></td>
+      <td class='td_basic' th:text="${gpaVO.gpadate}"></td>
+       
+      <td class='td_basic'>
+        <a th:href="@{/gpa/update(gpano=${gpaVO.gpano})}">
+        <img src='/member/images/update.png' title='수정' class="icon"></a>
+        </a>
+        <a th:href="@{/gpa/delete(gpano=${gpaVO.gpano})}">
+    <img src='/member/images/delete.png' title='삭제' class="icon">
+</a>
+      </td>
+      </fieldset>
+    </tr>
+  
+  </table>
+  
+  <!-- 페이지 버튼 목록 출력 시작 -->
+  <div class="Bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 --> 
+  
+  </div>
+</html>

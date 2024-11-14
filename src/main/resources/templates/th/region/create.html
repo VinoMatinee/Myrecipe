@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+   <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>지역 등록</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+<div class="container-fluid fruite py-5">
+      <div class="container py-5">
+
+    <div class="menu_line"></div>
+
+    <form name="frm" method="post" th:object="${regionVO}" action="./create" enctype="multipart/form-data">
+      
+      <input type="hidden" name="regiono" th:value="${regionVO.regiono}" />
+
+      <div>
+        <label>지역명</label>
+        <input type="text" name="regionname" required="required" autofocus="autofocus" class="form-control" style="width: 100%" />
+      </div>
+     
+      
+      
+      <div class="content_body_bottom">
+        <button type="submit" class="btn btn-secondary btn-sm">등록</button>
+        <button
+          type="button"
+          onclick="location.href='./list_cno?crudcateno=' + document.querySelector('[name=crudcateno]').value"
+          class="btn btn-secondary btn-sm"
+        >
+          목록
+        </button>
+      </div>
+    </form>
+    </div>
+    </div>
+  </div>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bootstrap Carousel</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/css/style.css" rel="stylesheet" type="text/css" />
+    <!-- /static 기준 -->
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <style>
+    .mobingprev {
+      margin-top: 200px;
+    }
+
+    .mobingnext {
+      margin-top: 200px;
+    }
+    .carousel-title {
+      text-align: center;
+      height: 100px;
+    }
+    .boxbody {
+      margin-top: 100px;
+      height: 500px;
+    }
+  </style>
+  <body th:fragment="mobingbox">
+    <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel" data-interval="5000">
+      <div class="carousel-inner">
+        <div th:each="region, iter : ${regions}" th:class="${iter.index == 0} ? 'carousel-item active' : 'carousel-item'">
+          <div class="carousel-title">
+            <h3><span th:text="'지역별 추천 음식 - ' + ${region.regionname}"></span></h3>
+          </div>
+          <div class="row">
+            <div class="col-md-3" th:each="food : ${regionFoodMap[__${region.regiono}__]}">
+              <div class="thumbnail">
+                <img class="d-block w-100" th:src="@{|/board/storage/@{${food.fthumb}}|}" />
+              </div>
+              <div class="caption">
+                <span class="text-primary" th:text="${food.foodtitle}"></span>
+                <p>...</p>
+                <a class="btn btn-mini" th:href="@{|/regionfood/read?foodno=${food.foodno}|}">&raquo; Read More</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <a class="carousel-control-prev mobingprev" href="#carouselExampleIndicators" role="button" data-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="sr-only">Previous</span>
+      </a>
+      <a class="carousel-control-next mobingnext" href="#carouselExampleIndicators" role="button" data-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="sr-only">Next</span>
+      </a>
+    </div>
+
+    <!-- -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

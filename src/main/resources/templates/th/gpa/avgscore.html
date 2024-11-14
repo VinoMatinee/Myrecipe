@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <head>
+    <link href="/css/style.css" rel="Stylesheet" type="text/css" />
+    <!-- /static 기준 -->
+  </head>
+  <div layout:fragment="content">
+    <div th:fragment="avgscore">
+      <div class="menu_line"></div>
+
+      <table style="width: 100%">
+        <colgroup>
+          <col style="width: 45%" />
+          <col style="width: 5%" />
+          <col style="width: 5%" />
+        </colgroup>
+        <tr th:each="gpaVO, status:${list}">
+          <fieldset>
+            <td th:if="${gpaVO == null}" class="td_basic">
+              <span></span>
+            </td>
+
+            <div th:if="${gpaVO != null}">
+              <td class="avgstar">
+                <span th:each="star : ${#numbers.sequence(1, gpaVO.avg_gpascore)}" name="reviewStar" id="starfont"
+                  ><i class="fa fa-star text-secondary"></i
+                ></span>
+              </td>
+            </div>
+          </fieldset>
+        </tr>
+      </table>
+    </div>
+  </div>
+</html>

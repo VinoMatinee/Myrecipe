@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+
+<div layout:fragment="content">
+
+  
+  <div th:if="${session.managerno != null}">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span class="title_line_text">AI</span> > <span class="title_line_text">답변(관리자 전용)</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+      
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item">
+          <a th:href="@{http://192.168.2.6:5000/menu_web(accountno=${session.accountno}, managerno=${session.managerno})}">질문</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+
+        <li class="breadcrumb-item">
+          <a href="./list">목록</a>
+        </li>
+      </ol>
+    </div>
+    <!-- Single Page Header End -->
+    
+    <div class='menu_line'></div>
+
+    <div class="container-fluid py-5">
+      <div class="container py-5">
+        <div th:replace="~{th/answer/list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+        <div class="table-responsive">
+          <table class="table">
+            <colgroup>
+              <col style='width: 10%;' />
+              <col style='width: 10%;' />
+              <col style='width: 60%;' />
+              <col style='width: 10%;' />
+              <col style='width: 10%;' />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col" class='th_bs'>사용자 이름</th>
+                <th scope="col" class='th_bs'>질문 이미지</th>
+                <th scope="col" class='th_bs'>답변</th>
+                <th scope="col" class='th_bs'>질문 등록일</th>
+                <th scope="col" class='th_bs'>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="answerVO, status : ${list}">
+                <td class='td_bs' th:text="${answerVO.aname}"></td>
+                <td class='td_bs'>
+                  <div
+                    th:if="${answerVO.img_search.endsWith('jpg') or answerVO.img_search.endsWith('png') or answerVO.img_search.endsWith('gif')}">
+                    <img th:src="@{|/contents/storage/${answerVO.img_search_thumb}|}" style="width: 80px; height: 80px;">
+                  </div>
+                </td>
+                <td id="text_answer" class='td_bs' th:text="${answerVO.text_answer}"></td>
+                <td class='td_bs' th:text="${answerVO.rdate.substring(0, 10)}"></td>
+                <td class='td_bs'>
+                  <button class="btn btn-md rounded-circle bg-light border">
+                  <i class="fa-sharp fa-solid fa-pen-to-square"></i>
+                  </button>
+                <button class="btn btn-md rounded-circle bg-light border text-danger">
+                  <i class="bi bi-trash3"></i>
+                </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div th:unless="${session.managerno != null}">
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span class="title_line_text">AI</span> > <span class="title_line_text">답변</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+      
+      <ol class="breadcrumb justify-content-center mb-0">
+        <li class="breadcrumb-item">
+          <a th:href="@{http://192.168.2.6:5000/menu_web(accountno=${session.accountno}, managerno=${session.managerno})}">질문</a>
+        </li>
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+
+        <li class="breadcrumb-item">
+          <a href="./list">목록</a>
+        </li>
+      </ol>
+    </div>
+    <div class='menu_line'></div>
+
+    <div class="container-fluid py-5">
+      <div class="container py-5">
+        <div th:replace="~{th/answer/list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+        <div class="table-responsive">
+          <table class="table">
+            <colgroup>
+              <col style='width: 15%;' />
+              <col style='width: 65%;' />
+              <col style='width: 10%;' />
+              <col style='width: 10%;' />
+            </colgroup>
+            <thead>
+              <tr>
+                <th scope="col" class='th_bs'>질문 이미지</th>
+                <th scope="col" class='th_bs'>답변</th>
+                <th scope="col" class='th_bs'>질문 등록일</th>
+                <th scope="col" class='th_bs'>관리</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr th:each="answerVO, status : ${list}">
+                <td class='td_bs'>
+                  <div
+                    th:if="${answerVO.img_search.endsWith('jpg') or answerVO.img_search.endsWith('png') or answerVO.img_search.endsWith('gif')}">
+                    <img th:src="@{|/contents/storage/${answerVO.img_search_thumb}|}" style="width: 80px; height: 80px;">
+                  </div>
+                </td>
+                <td id="text_answer" class='td_bs' th:text="${answerVO.text_answer}"></td>
+                <td class='td_bs' th:text="${answerVO.rdate.substring(0, 10)}"></td>
+                <td class='td_bs'>
+                  <button class="btn btn-md rounded-circle bg-light border ">
+                  <i class="fa-sharp fa-solid fa-pen-to-square"></i>
+                  </button>
+                <button class="btn btn-md rounded-circle bg-light border text-danger">
+                  <i class="bi bi-trash3"></i>
+                </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bottom_menu" th:utext="${paging}"></div>
+  <!-- 페이지 버튼 목록 출력 종료 -->
+</div>
+
+<div class='bottom_menu'>
+  <button type='button' onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+</div>
+
+</div>
+
+</html>

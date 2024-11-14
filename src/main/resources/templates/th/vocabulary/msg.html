@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+  <div class="title_line">단어 등록 알림 > 알림</div>
+  <div class="message">
+    <fieldset class="fieldset_basic">
+      <ul>
+        <li th:switch="${code}" class="li_none">
+          <div th:case="create_fail">
+            <span class="span_fail">단어장 등록에 실패했습니다.</span><br>
+          </div>
+          
+          <div th:case="create_success">
+            <span class="span_success">단어장 등록에 성공했습니다.</span><br>
+            등록된 단어: <span th:text="${voca}"></span>
+          </div>
+        </li>
+        
+        <li class="li_none">
+          <div th:if="${cnt == 0}">
+            <button type="button" onclick="history.back()" class="btn btn-secondary btn-sm">다시 시도</button>
+          </div>
+          <div th:if="${cnt == 1}">
+            <button type="button" onclick="location.href='/'" class="btn btn-secondary btn-sm">닫기</button>
+          </div>
+        </li>
+      </ul>
+    </fieldset>
+  </div>
+</div>
+</html>
+
+

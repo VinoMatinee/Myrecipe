@@ -1,0 +1,366 @@
+<head>
+  <link href="/css/style.css" rel="Stylesheet" type="text/css" />
+  <!-- /static 기준 -->
+</head>
+<body>
+  <div th:fragment="navbarFragment">
+    <!-- Navbar start -->
+    <div class="container-fluid fixed-top">
+      <div class="container topbar bg-primary d-none d-lg-block">
+        <div class="d-flex justify-content-between">
+          <div class="top-info ps-2">
+            <small class="me-3"><i class="fa fa-graduation-cap me-2 text-secondary"></i> <a href="#" class="text-white">SOLDESK PROJECT</a></small>
+            <small class="me-3"><i class="fa fa-users me-2 text-secondary"></i><a href="#" class="text-white">Team 레알밥도둑</a></small>
+          </div>
+          <div class="top-link pe-2">
+            <a href="#" class="text-white"><small class="text-white mx-2">홍승현</small>/</a>
+            <a href="#" class="text-white"><small class="text-white mx-2">김다혁</small>/</a>
+            <a href="#" class="text-white"><small class="text-white mx-2">김용훈</small>/</a>
+            <a href="#" class="text-white"><small class="text-white ms-2">손진빈</small></a>
+          </div>
+        </div>
+      </div>
+      <div class="container px-0">
+        <nav class="navbar navbar-light bg-white navbar-expand-xl">
+          <a href="/" class="navbar-brand"><h1 class="text-primary display-6">My Recipe</h1></a>
+          <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+            <span class="fa fa-bars text-primary"></span>
+          </button>
+          <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+            <div class="navbar-nav mx-auto">
+              <!-- 게시판 분류 -->
+              <li class="nav-item dropdown" th:each="crudcateVOMenu:${menu}">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="${crudcateVOMenu.name}"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li th:each="crudcateVO:${crudcateVOMenu.list_namesubs}">
+                    <a class="nav-link" th:href="@{|/board/list_cno?crudcateno=${crudcateVO.crudcateno}|}" th:text="${crudcateVO.namesub}"></a>
+                  </li>
+                </ul>
+              </li>
+              <!-- 회원 -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="회원"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="nav-item">
+                    <a class="nav-link" th:if="${session.accountno != null}" th:href="@{|/bookmark/bm_list?accountno=${session.accountno}|}"
+                      >북마크 목록</a
+                    >
+                  </li>
+                  <li class="nav-item" th:if="${session.managerno == null and session.accountno == null}">
+                    <a class="nav-link" href="/account/find_aid_form">아이디 찾기</a>
+                  </li>
+                  <li class="nav-item" th:if="${session.managerno == null and session.accountno == null}">
+                    <a class="nav-link" href="/account/find_passwd_form">비밀번호 찾기</a>
+                  </li>
+                  <li class="nav-item" th:if="${session.managerno != null or session.accountno != null}">
+                    <a class="nav-link" th:href="@{|/account/read?accountno=${session.accountno}|}">회원 정보 조회</a>
+                  </li>
+                  <li class="nav-item" th:if="${session.managerno != null or session.accountno != null}">
+                    <a class="nav-link" th:href="@{|/account/delete?accountno=${session.accountno}|}">회원 정보 삭제</a>
+                  </li>
+                  <li class="nav-item" th:if="${session.accountno != null}">
+                    <a class="nav-link" th:href="@{|/gpa/list|}">별점 리스트</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" th:if="${session.managerno != null or session.accountno != null}" onclick="openWordCloudPopup()"
+                      >워드 클라우드</a
+                    >
+                  </li>
+                </ul>
+              </li>
+
+              <!-- 관리자 -->
+              <li class="nav-item dropdown" th:if="${session.managerno >=1}">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="관리자"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="nav-item"><a class="nav-link" th:href="@{/crudcate/list_search}">카테고리 목록</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/board/list_all">전체 글 목록</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/account/list">회원 목록</a></li>
+                  <li class="nav-item"><a class="nav-link" href="/manager/list">관리자 목록</a></li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="recommendPopup()">추천 관리</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/region/list}">지역 목록</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:if="${session.managerno >=1}" th:href="@{/region/create}">지역 생성</a>
+                  </li>
+                </ul>
+              </li>
+
+              <!-- 단어장 -->
+              <li class="nav-item dropdown" th:if="${session.managerno >=1}">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="단어장"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/vocabulary/create}">단어 등록</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/vocabulary/list}">단어 목록</a>
+                  </li>
+                </ul>
+              </li>
+
+              <script>
+                function recommendPopup() {
+                  var popupWidth = 600; // 팝업 창의 너비
+                  var popupHeight = 600; // 팝업 창의 높이
+                  var leftPosition = (window.screen.width - popupWidth) / 2;
+                  var topPosition = (window.screen.height - popupHeight) / 2;
+
+                  var url = "http://192.168.2.37:5000/graph";
+                  window.open(
+                    url,
+                    "lunchPopup",
+                    "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition
+                  );
+                }
+              </script>
+
+              <!-- 향신료 등록 -->
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="향신료"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="nav-item" th:if="${session.managerno != null}">
+                    <a class="nav-link" th:href="@{/spice/list_search}">목록 관리</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/spice/list}">향신료정보</a>
+                  </li>
+                </ul>
+              </li>
+
+              <!-- Ai -->
+              <li class="nav-item dropdown" th:if="${session.managerno != null or session.accountno != null}">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="Ai질문"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <!-- <li class="nav-item">
+                    <a class="nav-link" th:href="@{http://192.168.2.37:5000/menu_web(accountno=${session.accountno}, managerno=${session.managerno})}"
+                      >AI 질문</a
+                    >
+                  </li> -->
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="openQuestPopup()">AI 질문</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/answer/list}">AI 답변</a>
+                  </li>
+                </ul>
+              </li>
+
+              <script>
+                function openQuestPopup() {
+                  var popupWidth = 600; // 팝업 창의 너비
+                  var popupHeight = 600; // 팝업 창의 높이
+                  var leftPosition = (window.screen.width - popupWidth) / 2;
+                  var topPosition = (window.screen.height - popupHeight) / 2;
+
+                  // 타임리프 변수를 자바스크립트 변수로 전달
+                  var accountno = /*[[${session.accountno}]]*/ "[[${session.accountno}]]";
+                  var managerno = "[[${session.managerno}]]";
+
+                  var url = "http://192.168.2.37:5000/menu_web?accountno=" + accountno + "&managerno=" + managerno;
+                  window.open(
+                    url,
+                    "lunchPopup",
+                    "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition
+                  );
+                }
+              </script>
+
+              <!-- 주간 식단 -->
+              <li class="nav-item dropdown" th:if="${session.accountno != null}">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="주간식단"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{|/week/create|}">주간 식단 작성</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{|/week/list_combined|}">주간 식단 목록</a>
+                  </li>
+                </ul>
+              </li>
+
+              <!-- 메뉴 추천 -->
+              <li class="nav-item dropdown" th:if="${session.managerno != null or session.accountno != null}">
+                <a
+                  class="nav-link dropdown-toggle"
+                  href="#"
+                  id="navbarDropdownMenuLink"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  th:text="메뉴추천"
+                >
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <!-- <li class="nav-item">
+                  <a class="nav-link" th:href="@{https://port-0-openai-1lx8pnj08.sel5.cloudtype.app(accountno=${session.accountno})}">오점뭐</a>
+                </li> -->
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="openLunchPopup()">오점뭐</a>
+                  </li>
+
+                  <li class="nav-item">
+                    <a class="nav-link" th:href="@{/lunch/list}">추천 목록</a>
+                  </li>
+                </ul>
+              </li>
+
+              <li class="nav-item dropdown" th:if="${session.managerno != null or session.accountno != null}">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" aria-expanded="false" th:text="채팅"> </a>
+                <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="openChatPopup()">채팅방</a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="#" onclick="openChatbotPopup()">챗 봇</a>
+                  </li>
+                </ul>
+              </li>
+
+              <script>
+                function openChatPopup() {
+                  var popupWidth = 600; // 팝업 창의 너비
+                  var popupHeight = 900; // 팝업 창의 높이
+                  var leftPosition = (window.screen.width - popupWidth) / 2;
+                  var topPosition = (window.screen.height - popupHeight) / 2;
+
+                  window.open(
+                    "/chat",
+                    "chatPopup",
+                    "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition
+                  );
+                }
+              </script>
+
+              <script>
+                function openLunchPopup() {
+                  var popupWidth = 600; // 팝업 창의 너비
+                  var popupHeight = 800; // 팝업 창의 높이
+                  var leftPosition = (window.screen.width - popupWidth) / 2;
+                  var topPosition = (window.screen.height - popupHeight) / 2;
+
+                  // 타임리프 변수를 자바스크립트 변수로 전달
+                  var accountno = /*[[${session.accountno}]]*/ "[[${session.accountno}]]";
+
+                  var url = "http://192.168.2.37:5000/lunch?accountno=" + accountno;
+                  window.open(
+                    url,
+                    "lunchPopup",
+                    "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition
+                  );
+                }
+
+                function openChatbotPopup() {
+                  var popupWidth = 600; // 팝업 창의 너비
+                  var popupHeight = 800; // 팝업 창의 높이
+                  var leftPosition = (window.screen.width - popupWidth) / 2;
+                  var topPosition = (window.screen.height - popupHeight) / 2;
+                  var url = "http://192.168.2.37:5000/chatbot";
+                  window.open(
+                    url,
+                    "lunchPopup",
+                    "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition
+                  );
+                }
+
+                function openWordCloudPopup() {
+                  var popupWidth = 800; // 팝업 창의 너비
+                  var popupHeight = 600; // 팝업 창의 높이
+                  var leftPosition = (window.screen.width - popupWidth) / 2;
+                  var topPosition = (window.screen.height - popupHeight) / 2;
+                  var url = "http://192.168.2.37:5000/wordcloud";
+                  window.open(
+                    url,
+                    "lunchPopup",
+                    "width=" + popupWidth + ", height=" + popupHeight + ", left=" + leftPosition + ", top=" + topPosition
+                  );
+                }
+              </script>
+            </div>
+            <div class="d-flex m-3 me-0">
+              <span class="nav-item my-auto me-4" th:if="${session.accountno == null} and ${session.managerno == null}"
+                ><a class="nav-link" href="/account/signin"><i class="fa fa-user-plus fa-2x"></i></a
+              ></span>
+
+              <span class="nav-item my-auto" th:if="${session.accountno == null} and ${session.managerno == null}"
+                ><a class="nav-link" href="/account/login"> <i class="fas fa-user fa-2x"></i></a
+              ></span>
+
+              <span class="my-auto" th:if="${session.managerno != null} or ${session.accountno != null}">
+                <!-- <i class="nav-link fa fa-sign-out fa-2x"></i> -->
+                <a class="nav-link" href="/account/logout" title="로그아웃"><i class="fas fa-user-slash fa-2x"></i></a
+              ></span>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </div>
+    <!-- Navbar End -->
+  </div>
+</body>

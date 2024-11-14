@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>
+          주간 식단표 작성
+          <p id="weekDates" class="mt-2"></p>
+        </span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <script>
+          function getCurrentWeekDates() {
+            const currentDate = new Date();
+            const firstDay = new Date(currentDate.setDate(currentDate.getDate() - currentDate.getDay() + 1));
+            const lastDay = new Date(currentDate.setDate(firstDay.getDate() + 6));
+
+            const formatDate = (date) => {
+              const year = date.getFullYear();
+              const month = String(date.getMonth() + 1).padStart(2, "0");
+              const day = String(date.getDate()).padStart(2, "0");
+              return `${year}-${month}-${day}`;
+            };
+
+            document.getElementById("weekDates").innerText = `${formatDate(firstDay)} ~ ${formatDate(lastDay)}`;
+          }
+
+          window.onload = function () {
+            getCurrentWeekDates();
+          };
+
+          // form 전송 전에 weekDates 값을 hidden input에 넣는 함수
+          function addWeekDatesToForm() {
+            const weekDates = document.getElementById("weekDates").textContent;
+            const weekDatesInput = document.createElement("input");
+            weekDatesInput.type = "hidden";
+            weekDatesInput.name = "weekdates";
+            weekDatesInput.value = weekDates;
+
+            document.querySelector("form").appendChild(weekDatesInput);
+          }
+        </script>
+        <form action="/week/create" method="POST" onsubmit="addWeekDatesToForm()">
+          <input type="hidden" name="accountno" th:value="${accountno}" />
+          <table class="table table-hover text-center">
+            <colgroup>
+              <col style="width: 10%"></span>
+              <col style="width: 10%"></span>
+              <col style="width: 10%"></span>
+              <col style="width: 10%"></span>
+              <col style="width: 10%"></span>
+              <col style="width: 10%"></span>
+              <col style="width: 10%"></span>
+              <col style="width: 10%"></span>
+            </colgroup>
+            <thead>
+              <tr>
+                <th></th>
+                <th>월요일</th>
+                <th>화요일</th>
+                <th>수요일</th>
+                <th>목요일</th>
+                <th>금요일</th>
+                <th>토요일</th>
+                <th>일요일</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <th>아침</th>
+                <td><input type="text" name="monbreakfast" placeholder="아침 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="tuebreakfast" placeholder="아침 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="wedbreakfast" placeholder="아침 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="thubreakfast" placeholder="아침 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="fribreakfast" placeholder="아침 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="satbreakfast" placeholder="아침 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="sunbreakfast" placeholder="아침 메뉴" style="width: 100%"/></td>
+              </tr>
+              <tr>
+                <th>점심</th>
+                <td><input type="text" name="monlunch" placeholder="점심 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="tuelunch" placeholder="점심 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="wedlunch" placeholder="점심 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="thulunch" placeholder="점심 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="frilunch" placeholder="점심 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="satlunch" placeholder="점심 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="sunlunch" placeholder="점심 메뉴" style="width: 100%"/></td>
+              </tr>
+              <tr>
+                <th>저녁</th>
+                <td><input type="text" name="mondinner" placeholder="저녁 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="tuedinner" placeholder="저녁 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="weddinner" placeholder="저녁 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="thudinner" placeholder="저녁 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="fridinner" placeholder="저녁 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="satdinner" placeholder="저녁 메뉴" style="width: 100%"/></td>
+                <td><input type="text" name="sundinner" placeholder="저녁 메뉴" style="width: 100%"/></td>
+              </tr>
+              <tr>
+                <th>칼로리</th>
+                <td><input type="text" name="moncal" placeholder="Kcal" style="width: 100%"/></td>
+                <td><input type="text" name="tuecal" placeholder="Kcal" style="width: 100%"/></td>
+                <td><input type="text" name="wedcal" placeholder="Kcal" style="width: 100%"/></td>
+                <td><input type="text" name="thucal" placeholder="Kcal" style="width: 100%"/></td>
+                <td><input type="text" name="frical" placeholder="Kcal" style="width: 100%"/></td>
+                <td><input type="text" name="satcal" placeholder="Kcal" style="width: 100%"/></td>
+                <td><input type="text" name="suncal" placeholder="Kcal" style="width: 100%"/></td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="d-flex justify-content-center mt-3">
+            <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">저장</button>
+          </div>  
+        </form>
+      </div>
+    </div>
+  </div>
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>카테고리 삭제</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /crudcate/list_search_component 로 교체 -->
+        <div th:replace="~{th/crudcate/list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+
+        <form name="frm" th:object="${crudcateVO}" method="post" action="/crudcate/delete" class="text-center">
+          <!-- hidden -->
+          <input type="hidden" name="crudcateno" th:value="${crudcateVO.crudcateno}" />
+          <input type="hidden" name="word" th:value="${word}" />
+          <input type="hidden" name="now_page" th:value="${now_page}" />
+
+          <p class="text-danger">카테고리를 삭제하면 복구 할 수 없습니다.</p>
+          [ <span th:text="${crudcateVO.name}" class="title_line_text"></span> >
+          <span th:text="${crudcateVO.namesub}" class="title_line_text"></span> >
+          <span th:text="${crudcateVO.namesubsub}" class="title_line_text"></span> ]
+
+          <div class="d-flex justify-content-center mt-3">
+            <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">삭제</button>
+            <button
+              type="button"
+              th:attr="onclick=|location.href='/crudcate/list_search?word=${word}&now_page=${now_page}'|"
+              class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1"
+            >
+              취소
+            </button>
+          </div>
+        </form>
+
+        <br />
+        <!-- /crudcate/list_all_component 로 교체 -->
+        <div th:replace="~{th/crudcate/list_all_component::list_all_fragment}"></div>
+      </div>
+    </div>
+  </div>
+</html>

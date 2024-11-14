@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SB가 자동으로 구현하여 연동하는 interface -->
+<mapper namespace="dev.mvc.recipe_step.Recipe_stepDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+  <insert id="create" parameterType="dev.mvc.recipe_step.Recipe_stepVO">
+    INSERT INTO recipe_step(step_no, step_order, step_text,step_img,step_imgsaved, thumb, ssize, foodno, managerno)
+    VALUES(recipe_step_seq.nextval, #{step_order}, #{step_text},#{step_img},#{step_imgsaved} , #{thumb}  , #{ssize} , #{foodno} , #{managerno})
+  </insert>
+  
+  <select id="selectMaxStepOrderByFoodno"  parameterType="dev.mvc.recipe_step.Recipe_stepVO" resultType="int">
+        SELECT MAX(step_order)
+        FROM recipe_step
+        WHERE foodno = #{foodno}
+    </select>
+  
+  <select id="listfoodno" resultType="dev.mvc.recipe_step.Recipe_stepVO" parameterType="int">
+   SELECT step_no, step_order, step_text,step_img,step_imgsaved, thumb, ssize, foodno, managerno
+    FROM recipe_step 
+    WHERE foodno = #{foodno}
+  </select>
+  
+ <select id="list" parameterType="dev.mvc.recipe_step.Recipe_stepVO">
+  SELECT step_no, step_order, step_text,step_img,step_imgsaved, thumb, ssize, foodno, managerno
+  FROM recipe_step
+  ORDER BY step_no ASC
+  </select>
+  
+  <delete id="delete" parameterType="dev.mvc.recipe_step.Recipe_stepVO">
+    DELETE FROM recipe_step WHERE step_no=#{step_no}
+  </delete>
+  
+  
+  <update id="update" parameterType="dev.mvc.recipe_step.Recipe_stepVO">
+    UPDATE recipe_step
+    SET step_text = #{step_text}, step_img = #{step_img}, step_imgsaved = #{step_imgsaved}, thumb = #{thumb}, ssize = #{ssize}
+    WHERE step_no = #{step_no}
+    
+  </update>
+  
+   <!-- read  -->
+    <select id="read" resultType="dev.mvc.recipe_step.Recipe_stepVO" parameterType="int">
+    SELECT step_no, step_order, step_text,step_img,step_imgsaved, thumb, ssize, foodno, managerno
+    FROM recipe_step 
+    WHERE step_no = #{step_no}
+  </select>
+  
+  
+  <!-- 조회 -->
+  <select id="alist" resultType="dev.mvc.recipe_step.Recipe_stepVO" parameterType="int">
+   SELECT step_no, step_order, step_text,step_img,step_imgsaved, thumb, ssize, foodno, managerno
+    FROM recipe_step 
+    WHERE step_no = #{step_no}
+  </select>
+  
+  
+   <select id="list_search_paging" resultType="dev.mvc.recipe_step.Recipe_stepVO" parameterType="Map">
+    SELECT step_no, step_order, step_text,step_img,step_imgsaved, thumb, ssize, foodno, managerno, r
+    FROM (
+        SELECT step_no, step_order, step_text,step_img,step_imgsaved, thumb, ssize, foodno, managerno, rownum as r
+        FROM (
+            SELECT v.step_no, v.step_order, v.step_text,v.step_img,v.step_imgsaved,v.thumb,v.ssize,v.foodno,v.managerno, m.MNAME
+            FROM recipe_step v
+            INNER JOIN MANAGER m ON v.managerno = m.MANAGERNO
+            <choose>
+      <when test="word == null or word == ''">
+        WHERE v.step_no = #{step_no} 
+        </when>
+        <otherwise> <!-- 검색하는 경우 -->
+             WHERE v.step_no = #{step_no}  AND UPPER(v.step_text) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(m.MNAME) LIKE '%' || UPPER(#{word}) || '%'  
+             </otherwise>
+              </choose>
+            ORDER BY v.step_no ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+</select>
+  
+  
+  <!-- 검색된 코드 수 -->
+  <select id="list_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM recipe_step
+    
+     <choose>
+      <when test="word == null or word == ''">
+        WHERE v.step_no = #{step_no} 
+        </when>
+        <otherwise> <!-- 검색하는 경우 -->
+             WHERE v.step_no = #{step_no}  AND UPPER(v.step_text) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(m.MNAME) LIKE '%' || UPPER(#{word}) || '%'  
+              </otherwise>
+              </choose>
+    ORDER BY step_no ASC
+  </select>
+  
+ 
+  
+</mapper>

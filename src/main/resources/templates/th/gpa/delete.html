@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> 
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span class="title_line_text">별점 삭제</span>
+         </h1>
+
+      <ol class="breadcrumb justify-content-center mb-0">
+       
+        <li class="breadcrumb-item">
+          <a href="javascript:location.reload();">새로고침</a>
+        </li>
+      </ol>
+    </div>
+    <!-- Header End -->
+    <div id="panel_delete" style="padding: 10px 0px 10px 0px; width: 100%; text-align: center">
+      <form name="frm" th:object="${gpaVO}" method="post" action="/gpa/delete">
+        <!-- hidden -->
+        <input type="hidden" name="gpano" th:value="${gpaVO.gpano}" />
+        
+        <div class="msg_warning">별점을 삭제하면 복구 할 수 없습니다.</div>
+        [ <span th:text="${gpaVO.gpano}" class="title_line_text"></span>  
+         ]
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+          <button type="button" th:attr="onclick=|location.href='/gpa/list'|" class="btn btn-secondary btn-sm">취소</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</html>

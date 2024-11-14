@@ -1,0 +1,32 @@
+<div th:fragment="create" class="my-1">
+  <c:import url="/menu/top.do" />
+
+  <!-- <div class="d-flex justify-content-center mt-3">별점 등록</div> -->
+  <form name="frm" method="post" action="/gpa/create" id="starscore" enctype="multipart/form-data">
+    <input type="hidden" name="boardno" th:value="${boardVO.boardno }" />
+
+    <div style="margin: 5px auto; width: 50%">
+      <fieldset>
+        <input type="radio" name="reviewStar" value="5" id="rate1" /><label for="rate1">★</label>
+        <input type="radio" name="reviewStar" value="4" id="rate2" /><label for="rate2">★</label>
+        <input type="radio" name="reviewStar" value="3" id="rate3" /><label for="rate3">★</label>
+        <input type="radio" name="reviewStar" value="2" id="rate4" /><label for="rate4">★</label>
+        <input type="radio" name="reviewStar" value="1" id="rate5" /><label for="rate5">★</label>
+        <button type="submit" class="btn btn-primary border-0 border-secondary rounded-pill text-black mx-1">별점 등록</button>
+      </fieldset>
+    </div>
+
+    <!-- <div class="d-flex justify-content-center mt-3">
+      <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">등록</button>
+      <button
+        type="button"
+        onclick="location.href='./list_by_cateno_search_paging.do?cateno=${param.cateno}'"
+        class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1"
+      >
+        목록
+      </button>
+    </div> -->
+  </form>
+
+  <jsp:include page="../menu/bottom.jsp" flush="false" />
+</div>

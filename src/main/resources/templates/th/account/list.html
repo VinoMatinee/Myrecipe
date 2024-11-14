@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">
+      <span class="title_line_text">회원 목록(관리자 전용)</span>
+      <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+    </h1>
+
+    <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+
+
+    </ol>
+  </div>
+
+
+  <div class='menu_line'></div>
+
+  <div class="container-fluid py-5">
+    <div class="container py-5">
+      <div th:replace="~{th/account/list_search_component::list_search_fragment}"></div>
+      <br>
+      <br>
+      <div class="table-responsive">
+        <table class="table">
+          <colgroup>
+            <col style='width: 5%;' />
+            <col style='width: 10%;' />
+            <col style='width: 10%;' />
+            <col style='width: 15%;' />
+            <col style='width: 15%;' />
+            <col style='width: 25%;' />
+            <col style='width: 10%;' />
+            <col style='width: 10%;' />
+          </colgroup>
+          <thead>
+          <tr>
+            <th scope="col" class='th_bs'> </TH>
+            <th scope="col" class='th_bs'>프로필 이미지</th>
+            <th scope="col" class='th_bs'>ID</th>
+            <th scope="col" class='th_bs'>성명</th>
+            <th scope="col" class='th_bs'>전화번호</th>
+            <th scope="col" class='th_bs'>주소</th>
+            <th scope="col" class='th_bs'>가입일</th>
+            <th scope="col" class='th_bs'>수정/삭제</th>
+          </tr>
+          </thead>
+            <tbody>
+
+          <tr th:each="accountVO, status:${list}">
+            <td class='td_basic'>
+              <div>
+                <div th:if="${accountVO.agrade >= 1 and accountVO.agrade <= 10}"><img src='/member/images/admin.png'
+                    title="관리자" class="icon"></div>
+                <div th:if="${accountVO.agrade >= 11 and accountVO.agrade <= 20}"><img src='/member/images/user.png'
+                    title="회원" class="icon"></div>
+                <div th:if="${accountVO.agrade >= 30 and accountVO.agrade <= 39}"><img src='/member/images/pause.png'
+                    title="정지 회원" class="icon"></div>
+                <div th:if="${accountVO.agrade >= 40 and accountVO.agrade <= 49}"><img src='/member/images/x.png'
+                    title="탈퇴 회원" class="icon"></div>
+              </div>
+            </td>
+            <td class='td_basic'>
+              <div
+                th:if="${accountVO.aprofile_img.endsWith('jpg') or accountVO.aprofile_img.endsWith('png') or accountVO.aprofile_img.endsWith('gif')}">
+                <img th:src="@{|/profiles/storage/${accountVO.aprofile_thum}|}" style="width: 80px; height: 80px;">
+              </div>
+
+              <div th:if="${accountVO.aprofile_size == 0}">
+                <img src="/account/images/basic.jpg" style="width: 80px; height: 80px;">
+              </div>
+            </td>
+
+            <td class='td_basic'><a th:href="@{|./read?accountno=${accountVO.accountno}|}"
+                th:text="${accountVO.aid}"></a></td>
+            <td class='td_basic'><a th:href="@{|./read?accountno=${accountVO.accountno}|}"
+                th:text="${accountVO.aname}"></a></td>
+            <td class='td_basic' th:text="${accountVO.atel}"></td>
+            <td class='td_basic'>
+              <span th:if="${accountVO.address1.length() > 15 }"
+                th:text="|${accountVO.address1.substring(0, 15) }...|"></span>
+              <span th:unless="${accountVO.address1.length() > 15 }" th:text="${accountVO.address1}"></span>
+            </td>
+            <td class='td_basic' th:text="${accountVO.adate.substring(0, 10)}"></td>
+            <td class='td_basic'>
+              <a th:href="@{|./read?accountno=${accountVO.accountno}|}"><img src='/member/images/update.png' title='수정' class="icon"></a>
+              <a th:href="@{|./delete?accountno=${accountVO.accountno}|}"><img src='/member/images/delete.png'
+                  title='삭제' class="icon"></a>
+            </td>
+
+          </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+        <div class="bottom_menu" th:utext="${paging}"></div>
+        <!-- 페이지 버튼 목록 출력 종료 -->
+      </div>
+
+
+      <div class='bottom_menu'>
+        <button type='button' onclick="location.reload();" class="btn btn-primary btn-sm">새로 고침</button>
+      </div>
+
+    </div>
+
+</html>

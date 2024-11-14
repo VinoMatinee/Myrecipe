@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.spice.SpiceDAOInter">
+
+  <!-- 등록 -->
+  <insert id="create" parameterType="dev.mvc.spice.SpiceVO">
+    INSERT INTO spice(spiceno, managerno, spicename, spicecont, spiceimg, spicesaved, spicethumb, spicesize, spiceprice, url, spicedate, good)
+    VALUES (spice_seq.nextval, #{managerno}, #{spicename}, #{spicecont}, #{spiceimg}, #{spicesaved}, #{spicethumb}, #{spicesize}, #{spiceprice}, #{url}, sysdate, 0)
+  </insert>
+
+  <!-- 목록 -->
+  <select id='list' resultType="dev.mvc.spice.SpiceVO">
+    SELECT spiceno, managerno, spicename, spicecont, spiceimg, spicesaved, spicethumb, spicesize, spiceprice, url, spicedate, good
+    FROM spice
+    ORDER BY spiceno ASC
+  </select>
+
+  <!-- 조회 -->
+  <select id="read" resultType="dev.mvc.spice.SpiceVO" parameterType="int">
+    SELECT spiceno, managerno, spicename, spicecont, spiceimg, spicesaved, spicethumb, spicesize, spiceprice, url, spicedate, good
+    FROM spice
+    WHERE spiceno = #{spiceno}
+  </select>
+
+  <!-- 수정 -->
+  <update id="update" parameterType="dev.mvc.spice.SpiceVO">
+    UPDATE spice
+    set spicename = #{spicename}, spicecont = #{spicecont}, spiceimg = #{spiceimg}, spicesaved = #{spicesaved}, spicethumb = #{spicethumb}, spicesize = #{spicesize}, spiceprice = #{spiceprice}, url = #{url}
+    WHERE spiceno = #{spiceno}
+  </update>
+
+  <!-- 삭제 -->
+  <delete id="delete" parameterType="int">
+    DELETE spice
+    WHERE spiceno = #{spiceno}
+  </delete>
+
+  <update id="good_up" parameterType="int">
+    update spice
+    set good = good + 1
+    where spiceno = #{spiceno}
+  </update>
+
+  <update id="good_down" parameterType="int">
+    update spice
+    set good = good - 1
+    where spiceno = #{spiceno}
+  </update>
+
+  <!--페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.spice.SpiceVO" parameterType="Map">
+    SELECT spiceno, managerno, spicename, spicecont, spiceimg, spicesaved, spicethumb, spicesize, spiceprice, url, spicedate, good, r
+    FROM (
+        SELECT spiceno, managerno, spicename, spicecont, spiceimg, spicesaved, spicethumb, spicesize, spiceprice, url, spicedate, good, rownum as r
+        FROM (
+            SELECT spiceno, managerno, spicename, spicecont, spiceimg, spicesaved, spicethumb, spicesize, spiceprice, url, spicedate, good
+            FROM spice
+            <if test="word != null and word !=''">
+            WHERE UPPER(spicename) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(spicecont) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(url) LIKE '%' || UPPER(#{word}) || '%'
+            </if>
+            ORDER BY spiceno ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+
+  <!-- 검색된 코드 수 -->
+  <select id="list_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM spice
+    <if test="word != null and word !=''">
+      WHERE UPPER(spicename) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(spicecont) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(url) LIKE '%' || UPPER(#{word}) || '%'
+    </if>
+    ORDER BY spiceno ASC
+  </select>
+
+</mapper>

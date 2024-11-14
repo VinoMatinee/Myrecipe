@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.manager.ManagerDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+<select id="checkID_manager" resultType="int" parameterType="String">
+    SELECT COUNT(mid) as cnt
+    FROM MANAGER
+    WHERE mid=#{mid}
+  </select>
+
+<insert id="signin_manager" parameterType="dev.mvc.manager.ManagerVO">
+    INSERT INTO MANAGER(managerno, mid, mpasswd, mname, mdate, mgrade)
+    VALUES (manager_seq.nextval, #{mid}, #{mpasswd}, #{mname}, sysdate, #{mgrade})
+  </insert>
+  
+  <select id="login_manager" resultType="int" parameterType="HashMap">
+    SELECT COUNT(managerno) as cnt
+    FROM manager
+    WHERE mid=#{mid} AND mpasswd=#{mpasswd}
+  </select>
+  
+    <!-- id(이메일)로 회원 정보 조회 -->
+  <select id="readById" resultType="dev.mvc.manager.ManagerVO" parameterType="String">
+    SELECT managerno, mid, mpasswd, mname, mdate, mgrade
+    FROM manager
+    WHERE mid = #{mid}
+  </select>
+  
+    <select id="list" resultType="dev.mvc.manager.ManagerVO">
+    SELECT managerno, mid, mpasswd, mname, mdate, mgrade
+    FROM manager
+    ORDER BY mgrade ASC, mid ASC
+  </select>
+  
+    <!-- memberno로 회원 정보 조회 -->
+  <select id="read" resultType="dev.mvc.manager.ManagerVO" parameterType="int">
+    SELECT managerno, mid, mpasswd, mname, mdate, mgrade
+    FROM manager
+    WHERE managerno = #{managerno}
+  </select>  
+  
+    <!-- update -->
+   <update id="update_manager" parameterType="dev.mvc.manager.ManagerVO">
+    UPDATE manager 
+    SET mname=#{mname}
+    WHERE managerno=#{managerno}
+  </update>
+  
+  <!-- delete -->
+    <delete id="delete_manager" parameterType="int">
+    DELETE FROM manager
+    WHERE managerno=#{managerno}
+  </delete>
+
+</mapper>

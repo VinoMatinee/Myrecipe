@@ -1,0 +1,80 @@
+
+<!DOCTYPE html> 
+<html lang="ko"> 
+<head> 
+<meta charset="UTF-8"> 
+<meta name="viewport" content="user-scalable=yes, initial-scale=1.0, maximum-scale=3.0, width=device-width" /> 
+<title>Resort world</title>
+<link rel="shortcut icon" href="/images/shortcut.png" /> 
+<link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+
+</head> 
+<body>
+<c:import url="/menu/top.do" />
+
+<DIV class='title_line'>알림</DIV>
+
+<c:set var="code" value="${param.code }" /> 
+<c:set var="cnt" value="${param.cnt }" />     
+<c:set var="cateno" value="${param.cateno }" /> 
+
+<DIV class='message'>
+  <fieldset class='fieldset_basic'>
+    <UL>
+      <c:choose>
+        <c:when test="${code == 'passwd_fail'}">
+          
+        </c:when>
+        
+        <c:when test="${code == 'create_success'}"> 
+          <li class='li_none'>
+            <span class="span_success">새로운 컨텐츠를 등록했습니다.</span>
+          </li> 
+        </c:when>
+
+        <c:when test="${code == 'check_upload_file_fail'}"> 
+         
+        </c:when>
+                
+        <c:when test="${code == 'create_fail'}"> 
+                                                                               
+        </c:when>
+        
+        <c:when test="${code == 'update_fail'}"> 
+                                                                           
+        </c:when>
+        
+        <c:when test="${code == 'delete_success'}"> 
+                                                                           
+        </c:when>        
+        
+        <c:when test="${code == 'delete_fail'}"> 
+                                                                               
+        </c:when> 
+        
+        <c:otherwise>
+          
+          
+        </c:otherwise>
+      </c:choose>
+      
+        <br>
+        <c:choose>
+            <c:when test="${cnt == 0 }">
+                <button type='button' onclick="history.back()" class="btn btn-secondary btn-sm">다시 시도</button>    
+            </c:when>
+        </c:choose>
+        
+        <button type='button' onclick="location.href='./create.do?cateno=${cateno}'" class="btn btn-secondary btn-sm">새로운 컨텐츠 등록</button>
+        <button type='button' onclick="location.href='./list'" class="btn btn-secondary btn-sm">목록</button>
+        
+    </UL>
+  </fieldset>
+
+</DIV>
+
+<jsp:include page="../menu/bottom.jsp" flush='false' />
+</body>
+
+</html>
+

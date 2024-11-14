@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html layout:decorate="~{th/layout}">
+  <head>
+    <style>
+      .highlight {
+        color: blue;
+        cursor: pointer;
+      }
+
+      .tooltip {
+        display: none;
+      }
+
+      a:hover {
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- 단어장 스크립트 -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const tooltip = document.getElementById("tooltip");
+
+        document.querySelectorAll(".highlight").forEach((item) => {
+          item.addEventListener("click", (event) => {
+            const word = item.getAttribute("data-word");
+            fetch(`/board/meaning`, {
+              method: "POST",
+              headers: {},
+              body: new URLSearchParams({ voca: word }),
+            })
+              .then((response) => response.json())
+              .then((data) => {
+                console.log(word);
+                tooltip.textContent = data.meaning;
+                tooltip.style.display = "block";
+                tooltip.style.left = `${event.pageX}px`;
+                tooltip.style.top = `${event.pageY}px`;
+              });
+          });
+        });
+
+        document.addEventListener("click", (event) => {
+          if (!event.target.classList.contains("highlight")) {
+            tooltip.style.display = "none";
+          }
+        });
+      });
+
+      // <!-- 댓글 스크립트 -->
+
+      let breply_data; // 댓글 저장
+      let breply_now_page = 1; // 댓글 현재 페이지
+
+      window.onload = () => {
+        let breplyno_tag = document.getElementById("breplyno");
+        let content_tag = document.getElementById("breplycont");
+        let password_tag = document.getElementById("breplypasswd");
+        let file_tag = document.getElementById("file1MF");
+        
+        let btn_create_tag = document.getElementById("btn_create"); // 댓글 등록
+        let btn_save_tag = document.getElementById("btn_save"); // 댓글 수정 저장
+        let btn_cancel_tag = document.getElementById("btn_cancel"); // 댓글 수정 취소
+        let btn_add = document.getElementById("btn_add"); // 댓글 더보기
+
+        content_tag.addEventListener("click", () => {
+          let aid = "[[${session.aid}]]";
+          let mid = "[[${session.mid}]]";
+          if (aid == "" && mid == "") {
+            alert("로그인 후 이용 가능합니다.");
+            location.href = "/account/login?url=/board/read?boardno=[[${boardVO.boardno}]]%26word=[[${word}]]%26now_page=[[${now_page}]]";
+          }
+        });
+
+        // 댓글 생성
+        btn_create_tag.addEventListener("click", () => {
+          let content = content_tag.value.trim();
+          let breplypasswd = password_tag.value.trim();
+          let file = file_tag.files[0];
+
+          if (content.length == 0) {
+            alert("내용을 입력해주세요.");
+          } else {
+            if (breplypasswd.length == 0) {
+              alert("비밀번호를 설정해주세요.");
+            } else {
+              let formData = new FormData();
+              formData.append("boardno", "[[${boardVO.boardno}]]");
+              formData.append("breplycont", content);
+              formData.append("breplypasswd", breplypasswd);
+              if (file) {
+                // 파일이 존재할 경우에만 추가
+                formData.append("file1MF", file);
+              }
+
+              fetch("/breply/create", {
+                method: "post",
+                body: formData,
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  // 등록 후 처리
+                  content_tag.value = "";
+                  password_tag.value = "";
+                  file_tag.value = "";
+                  content_tag.focus();
+                  reply_list();
+                })
+                .catch((error) => {
+                  console.error("댓글 등록 실패:", error);
+                });
+            }
+          }
+        });
+
+        // 더보기
+        btn_add.addEventListener("click", () => {
+          if (breply_data.length > breply_now_page * 5) {
+            let start = 0;
+            let end = 0;
+
+            if (breply_data.length > 5) {
+              start = breply_now_page * 5;
+              end = breply_now_page * 5 + 5;
+
+              let msg = "";
+              let page_div = document.createElement("div");
+              let reply_list_tag = document.getElementById("reply_list");
+
+              for (let i = start; i < end; i++) {
+                if (i == breply_data.length) {
+                  break;
+                }
+
+                let row = breply_data[i];
+                let date = new Date(row.breplydate);
+
+                let formattedDate = `${date.getFullYear().toString().slice(-2)}.${(date.getMonth() + 1).toString().padStart(2, "0")}.${date
+                  .getDate()
+                  .toString()
+                  .padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+
+                msg += "<div id='" + row.breplyno + "' style='border-bottom: solid 1px #EEEEEE; margin-bottom: 10px;'>";
+                msg += "<span style='font-weight: bold;'>" + row.id + "</span>";
+                msg += "  [" + formattedDate + "]";
+
+                if ("[[${session.mid}]]" == row.id || "[[${session.aid}]]" == row.id) {
+                  // 글쓴이 일치여부 확인, 본인의 글만 삭제 가능함 ★
+                  msg += " <a href='javascript:breply_update(" + row.breplyno + ")' title='댓글 수정'><i class='fa-solid fa-pen-to-square'></i></a>";
+                  msg += " <a href='javascript:breply_delete(" + row.breplyno + ")' title='댓글 삭제'><i class='fa-solid fa-trash-can'></i></a>";
+                }
+                msg += " <a href='/breply/read_reply?breplyno=" + row.breplyno + "' title='댓글 보기'><i class='fa-regular fa-comment-dots'></i></a>";
+                msg += "  " + "<br>";
+
+                if (row.breplythumb != null && row.breplythumb != "") {
+                  msg += '<img src="/contents/storage/' + row.breplythumb + '" alt="댓글 이미지">';
+                  msg += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                msg += row.breplycont;
+                msg += "</div>";
+              }
+
+              page_div.innerHTML = msg;
+              reply_list_tag.appendChild(page_div);
+
+              breply_now_page = breply_now_page + 1;
+            }
+          } else {
+            alert("마지막 페이지 입니다.");
+          }
+        });
+
+        btn_save_tag.addEventListener("click", () => {
+          let breplyno = breplyno_tag.value;
+          let content = content_tag.value.trim();
+          let file = file_tag.files[0];
+          let breplypasswd = password_tag.value.trim();
+
+          if (content.length == 0) {
+            alert("내용을 입력해주세요.");
+          } else {
+            if (breplypasswd != "") {
+              let formData = new FormData();
+
+              formData.append("breplyno", breplyno);
+              formData.append("breplycont", content);
+              formData.append("breplypasswd", breplypasswd);
+
+              if (file) {
+                // 파일이 존재할 경우에만 추가
+                formData.append("file1MF", file);
+              }
+
+              fetch("/breply/update", {
+                method: "post",
+                body: formData,
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  console.log("서버 응답:", JSON.stringify(data));
+                  if (data["res"] == 0) {
+                    alert("댓글 수정에 실패 했습니다.\n 잠시후 다시 시도해 주세요(관리자: 02-123-1234)");
+                  } else if (data["res"] == 2) {
+                    alert("비밀번호가 다릅니다. 댓글을 등록할 때 설정한 비밀번호를 입력해주세요.");
+                  } else {
+                    content_tag.value = "";
+                    file_tag.value = "";
+                    password_tag.value = "";
+                    content_tag.focus();
+                    btn_visible("default");
+                    reply_list();
+                  }
+                })
+                .catch((error) => {
+                  console.error("댓글 수정 실패:", error);
+                });
+            } else {
+              alert("비밀번호를 입력해주세요.");
+            }
+          }
+        });
+
+        btn_cancel_tag.addEventListener("click", () => {
+          content_tag.value = "";
+          file_tag.value = "";
+          password_tag.value = "";
+          content_tag.focus();
+          btn_visible("default");
+        });
+
+        reply_list();
+      };
+
+      // 댓글 목록 function
+      function reply_list() {
+        let cnt = 0;
+
+        fetch("/breply/list?boardno=[[${boardVO.boardno}]]", {
+          method: "get",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            breply_data = data["res"];
+
+            if (breply_data.length > 5) {
+              cnt = 5;
+            } else {
+              cnt = breply_data.length;
+            }
+
+            let msg = "";
+            if (breply_data.length > 0) {
+              for (let i = 0; i < cnt; i++) {
+                // let row = data['res'][i];
+                let row = breply_data[i];
+                let date = new Date(row.breplydate);
+
+                let formattedDate = `${date.getFullYear().toString().slice(-2)}.${(date.getMonth() + 1).toString().padStart(2, "0")}.${date
+                  .getDate()
+                  .toString()
+                  .padStart(2, "0")} ${date.getHours().toString().padStart(2, "0")}:${date.getMinutes().toString().padStart(2, "0")}`;
+
+                msg += "<div id='" + row.breplyno + "' style='border-bottom: solid 1px #EEEEEE; margin-bottom: 10px;'>";
+                msg += "<span style='font-weight: bold;'>" + row.id + "</span>";
+                msg += "  [" + formattedDate + "]";
+
+                if ("[[${session.mid}]]" == row.id || "[[${session.aid}]]" == row.id) {
+                  // 글쓴이 일치여부 확인, 본인의 글만 삭제 가능함 ★
+                  msg += " <a href='javascript:breply_update(" + row.breplyno + ")' title='댓글 수정'><i class='fa-solid fa-pen-to-square'></i></a>";
+                  msg += " <a href='javascript:breply_delete(" + row.breplyno + ")' title='댓글 삭제'><i class='fa-solid fa-trash-can'></i></a>";
+                }
+                msg += " <a href='/breply/read_reply?breplyno=" + row.breplyno + "' title='댓글 보기'><i class='fa-regular fa-comment-dots'></i></a>";
+                msg += "  " + "<br>";
+
+                if (row.breplythumb != null && row.breplythumb != "") {
+                  msg += '<img src="/contents/storage/' + row.breplythumb + '" alt="댓글 이미지">';
+                  msg += "&nbsp;&nbsp;&nbsp;&nbsp;";
+                }
+                msg += row.breplycont;
+                msg += "</div>";
+              }
+
+              document.getElementById("reply_list").innerHTML = msg;
+            } else {
+              msg += "<div style='text-align: center;'>";
+              msg += "등록된 댓글이 없습니다.";
+              msg += "</div>";
+              document.getElementById("reply_list").innerHTML = msg;
+            }
+          });
+      }
+
+      // 수정폼
+      function breply_update(breplyno) {
+        let breplyno_tag = document.getElementById("breplyno");
+        let accountno_tag = document.getElementById("accountno");
+        let managerno_tag = document.getElementById("managerno");
+        let content_tag = document.getElementById("breplycont");
+
+        fetch("/breply/read?breplyno=" + breplyno, {
+          method: "get",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            breplyno_tag.value = data["res"]["breplyno"];
+            managerno_tag.value = data["res"]["managerno"];
+            accountno_tag.value = data["res"]["accountno"];
+            content_tag.value = data["res"]["breplycont"];
+            content_tag.focus();
+            btn_visible("update");
+          })
+          .catch((error) => {
+            console.error("댓글 등록 실패:", error);
+          });
+      }
+
+      // 삭제폼 + 처리
+      function breply_delete(breplyno) {
+        let content_tag = document.getElementById("content");
+
+        fetch("/breply/read?breplyno=" + breplyno, {
+          method: "get",
+          headers: { "Content-Type": "application/json" },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            let sw = confirm("《" + data["res"]["breplycont"] + "》\n삭제하시면 복구할 수 없습니다. 그래도 삭제하시겠습니까?");
+            if (sw == true) {
+              fetch("/breply/delete", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ breplyno: breplyno }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  if (data["res"] == 1) {
+                    alert("댓글을 삭제했습니다.");
+
+                    reply_list();
+                  } else {
+                    alert("댓글 삭제에 실패했습니다. 잠시후 다시 시도해주세요.");
+                  }
+                });
+            } else {
+              alert("댓글 삭제를 취소했습니다.");
+            }
+          });
+      }
+
+      // 버튼 출력 function
+      function btn_visible(sw) {
+        let btn_create = document.getElementById("btn_create");
+        let btn_save = document.getElementById("btn_save");
+        let btn_cancel = document.getElementById("btn_cancel");
+
+        if (sw == "update") {
+          btn_create.style.display = "none"; // hidden
+          btn_save.style.display = ""; // show
+          btn_cancel.style.display = "";
+        } else if (sw == "default") {
+          btn_create.style.display = "";
+          btn_save.style.display = "none";
+          btn_cancel.style.display = "none";
+        }
+      }
+
+      // 북마크 스크립트
+      // URL 파라미터에서 특정 값을 추출하는 함수
+      function getParameterByName(name, url = window.location.href) {
+        name = name.replace(/[\[\]]/g, "\\$&");
+        let regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+          results = regex.exec(url);
+        if (!results) return null;
+        if (!results[2]) return "";
+        return decodeURIComponent(results[2].replace(/\+/g, " "));
+      }
+
+      // 북마크 추가
+      async function addBookmark() {
+        const currentUrl = window.location.href; // 현재 페이지의 URL
+        const accountNo = document.getElementById("accountNo").value;
+        const boardno = getParameterByName("boardno");
+
+        try {
+          const response = await fetch("/bookmark/add", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              accountno: accountNo,
+              bookmarkurl: currentUrl,
+              boardno: boardno,
+            }),
+          });
+
+          const result = await response.json();
+          if (response.ok) {
+            alert(result.message);
+          } else {
+            alert("이미 북마크에 등록되어 있습니다.");
+          }
+        } catch (error) {
+          console.error("북마크 저장에 실패했습니다.", error);
+          alert("북마크 저장에 실패했습니다.");
+        }
+      }
+
+      // 북마크 삭제
+      async function deleteBookmark() {
+        const accountno = document.getElementById("accountNo").value;
+        const boardno = getParameterByName("boardno");
+
+        if (confirm("북마크를 삭제하시겠습니까?")) {
+          const response = await fetch("/bookmark/delete", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              accountno: accountno,
+              boardno: boardno,
+            }),
+          });
+
+          const result = await response.json();
+          alert(result.message);
+          if (result.result) {
+            // 성공적으로 삭제되었을 경우 필요한 처리
+          } else {
+            // 삭제에 실패한 경우 필요한 처리
+          }
+        }
+      }
+    </script>
+
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span th:text="${crudcateVO.name}" class="title_line_text"></span>
+        > <span th:text="${crudcateVO.namesub}" class="title_line_text"></span> > <span>글 조회</span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <input type="hidden" name="crudcateno" th:value="${param.crudcateno}" />
+        <input type="hidden" id="accountNo" th:value="${session.accountno}" />
+
+        <aside class="aside_right">
+          <a th:href="@{|/board/create?crudcateno=${boardVO.crudcateno}|}"
+            ><i class="bi bi-pencil-square" style="font-size: 1.5rem" title="등록" th:if="${session.managerno >= 1 || session.accountno >= 1}"></i
+          ></a>
+          <a
+            th:href="@{|/board/update_board?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}|}"
+            th:if="${session.managerno >= 1 || session.accountno == boardVO.accountno}"
+            ><i class="bi bi-eraser" style="font-size: 1.5rem" title="수정"></i
+          ></a>
+          <a
+            th:href="@{|./update_file?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}|}"
+            th:if="${session.managerno >= 1 || session.accountno == boardVO.accountno}"
+            ><i class="bi bi-image" style="font-size: 1.5rem" title="파일 수정"></i
+          ></a>
+          <a
+            th:href="@{|/board/youtube?crudcateno=${boardVO.crudcateno}&boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}|}"
+            th:if="${session.managerno >= 1 || session.accountno == boardVO.accountno}"
+            ><i class="bi bi-youtube" style="font-size: 1.5rem" title="유튜브"></i
+          ></a>
+          <a
+            th:href="@{|./delete?boardno=${boardVO.boardno}&word=${word}&now_page=${now_page}&crudcateno=${boardVO.crudcateno}|}"
+            th:if="${session.managerno >= 1 || session.accountno == boardVO.accountno}"
+            ><i class="bi bi-trash3" style="font-size: 1.5rem" title="삭제"></i
+          ></a>
+          <a th:href="@{|/vocabulary/create|}"
+            ><i class="bi bi-wordpress" style="font-size: 1.5rem" title="단어장" th:if="${session.managerno >= 1}"></i
+          ></a>
+
+          <a onclick="addBookmark()" th:if="${session.managerno >= 1 || session.accountno >= 1}"><i class="bi bi-bookmark-star" style="font-size: 1.5rem" title="북마크"></i></a>
+
+          <a onclick="deleteBookmark()" th:if="${session.managerno >= 1 || session.accountno >= 1}"><i class="bi bi-bookmark-x" style="font-size: 1.5rem; color: red" title="북마크 삭제" ></i></a>
+
+          <a href="javascript:location.reload();"><i class="bi bi-arrow-clockwise" style="font-size: 1.5rem" title="새로고침"></i></a>
+
+          <a th:href="@{|./list_cno?crudcateno=${crudcateVO.crudcateno}&word=${word}&now_page=${now_page}|}"
+            ><i class="bi bi-list-columns-reverse" style="font-size: 1.5rem" title="목록"></i
+          ></a>
+        </aside>
+
+        <!-- 게시글 내용 -->
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="border rounded">
+              <div th:if="${boardVO.bphoto.endsWith('jpg') || boardVO.bphoto.endsWith('png')  || boardVO.bphoto.endsWith('gif')}">
+                <img th:src="@{|/board/storage/${boardVO.bphotosaved}|}" style="width: 100%" th:alt="${boardVO.bphoto}" />
+              </div>
+              <div th:if="${boardVO.bsize == 0}">
+                <img src="/board/images/aaa.jpg" style="width: 100%" />
+              </div>
+              <div
+                th:if="${((boardVO.bphoto.endsWith('jpg') or boardVO.bphoto.endsWith('png')  or boardVO.bphoto.endsWith('gif')) == false) and (boardVO.bsize > 0)}"
+              >
+                <div>
+                  <span th:text="${boardVO.bphoto}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <span class="mb-3" style="font-size: 1.5em; font-weight: bold" th:text="${boardVO.btitle}"></span>
+            <p class="mb-3" style="font-size: 1em" th:text="${boardVO.bdate }"></p>
+            <!-- 별점 평균 -->
+            <div th:replace="~{th/gpa/avgscore :: avgscore}"></div>
+            <!-- 별점 등록 -->
+            <div th:replace="~{th/gpa/create :: create}"></div>
+
+            <div style="white-space: pre-wrap"><span th:utext="${content}"></span></div>
+
+<br>
+            
+            <div id="tooltip"></span></div>
+
+            <ul class="mt-4">
+              <li class="li_none" th:text="|검색어(키워드): ${boardVO.btag}|"></li>
+              <li class="li_none" th:if="${boardVO.bsize > 0}">
+                <span>첨부 파일: </span>
+                <a
+                  th:href="@{|/download?dir=/board/storage&filename=${boardVO.bphotosaved}&downname=${boardVO.bphoto}|}"
+                  th:text="|${boardVO.bphoto}|"
+                ></a>
+                <span th:text="|(${boardVO.bsize_label})|"></span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="mt-3"
+          style="clear: both; padding-top: 10px; padding-bottom: 25px"
+          th:if="${boardVO.byoutube != null and boardVO.byoutube.length() > 0}"
+        >
+          <div style="text-align: center; width: 640px; margin: 0px auto" th:utext="${boardVO.byoutube}"></div>
+        </div>
+        <!-- 게시글 내용 끝-->
+
+        <!-- 댓글 영역 시작 -->
+        <div style="width: 100%; margin: 0px auto; clear: both" class="mt-2">
+          <!-- 댓글 등록 폼 -->
+          <form name="frm_reply" id="frm_reply" enctype="multipart/form-data">
+            <input type="hidden" name="boardno" id="boardno" value="" />
+            <input type="hidden" name="breplyno" id="breplyno" value="" />
+            <input type="hidden" name="accountno" id="accountno" value="" />
+            <input type="hidden" name="managerno" id="managerno" value="" />
+
+            <!-- 댓글 입력 창 -->
+            <textarea
+              name="breplycont"
+              id="breplycont"
+              style="width: 100%; height: 60px"
+              class="form-control"
+              placeholder="댓글 작성, 로그인해야 등록 할 수 있습니다."
+              autofocus="autofocus"
+            ></textarea>
+
+            <div style="margin: 5px auto; width: 80%; display: flex; align-items: center">
+              <input type="file" class="form-control" name="file1MF" id="file1MF" style="width: 60%" placeholder="파일 선택" />
+              <input
+                type="password"
+                name="breplypasswd"
+                id="breplypasswd"
+                value=""
+                class="form-control"
+                style="width: 20%"
+                placeholder="비밀번호를 입력해주세요"
+              />
+            </div>
+            <div style="text-align: center">
+              <button type="button" id="btn_create" class="btn btn-primary border-0 border-secondary rounded-pill text-black mx-1">
+                &nbsp;&nbsp;등&nbsp;&nbsp;록&nbsp;&nbsp;
+              </button>
+              <button
+                type="button"
+                id="btn_save"
+                style="display: none"
+                class="btn btn-primary border-0 border-secondary rounded-pill text-black mx-1"
+              >
+                &nbsp;&nbsp;저&nbsp;&nbsp;장&nbsp;&nbsp;
+              </button>
+              <button
+                type="button"
+                id="btn_cancel"
+                style="display: none"
+                class="btn btn-primary border-0 border-secondary rounded-pill text-black mx-1"
+              >
+                &nbsp;&nbsp;취&nbsp;&nbsp;소&nbsp;&nbsp;
+              </button>
+            </div>
+          </form>
+          <br />
+          <!-- 댓글 목록 -->
+          <div id="reply_list" data-replypage="1"></div>
+          <br />
+          <div id="reply_list_btn" style="border: none">
+            <button id="btn_add" style="width: 100%" class="btn btn-primary border-0 border-secondary rounded-pill text-black mx-1">더보기 ▽</button>
+          </div>
+        </div>
+        <!-- 댓글 영역 종료 -->
+      </div>
+    </div>
+  </div>
+</html>

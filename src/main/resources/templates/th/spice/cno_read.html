@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <div layout:fragment="content">
+    <script>
+      window.onload = () => {
+        let good_tag = document.getElementById("good");
+        let heart_tag = document.getElementById("heart");
+        let fill_heart_tag = document.getElementById("fill_heart");
+
+        good_tag.addEventListener("click", () => {
+          let managerno = "[[${session.managerno}]]";
+          let accountno = "[[${session.accountno}]]";
+          let spiceno = "[[${spiceVO.spiceno}]]";
+
+          if (managerno == "" && accountno == "") {
+            alert("로그인 후 이용가능합니다.");
+            location.href = "/account/login?url=/spice/cno_read?spiceno=[[${spiceVO.spiceno}]]%26word=[[${word}]]%26now_page=[[${now_page}]]";
+          } else {
+            if (managerno != "") {
+              alert("관리자는 이용하실 수 없는 기능입니다.");
+            } else if (accountno != "") {
+              fetch("/spice/good", {
+                method: "post",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ accountno: accountno, spiceno: "[[${spiceVO.spiceno}]]" }),
+              })
+                .then((response) => response.json())
+                .then((data) => {
+                  document.getElementById("good_cnt").innerText = "[[${spiceVO.good}]]";
+                  setTimeout(() => {
+                    location.reload();
+                  }, 300);
+                  good_cnt();
+                });
+            }
+          }
+        });
+        document.getElementById("good_cnt").innerText = "[[${spiceVO.good}]]";
+        good_cnt();
+      };
+
+      function good_cnt() {
+        let heart_tag = document.getElementById("heart");
+        let fill_heart_tag = document.getElementById("fill_heart");
+
+        let accountno = "[[${session.accountno}]]";
+        let spiceno = "[[${spiceVO.spiceno}]]";
+
+        fetch("/spice/good_cnt", {
+          method: "post",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ accountno: accountno, spiceno: "[[${spiceVO.spiceno}]]" }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.res == 1) {
+              heart_tag.style.display = "none";
+              fill_heart_tag.style.display = "";
+            } else {
+              heart_tag.style.display = "";
+              fill_heart_tag.style.display = "none";
+            }
+          });
+      }
+    </script>
+
+    <!-- /spice/list_search_component 로 교체 -->
+    <div th:replace="~{th/spice/list_search_component::list_search_fragment}"></div>
+
+    <input type="hidden" name="spiceno" id="spiceno" th:value="${spiceVO.spiceno}" />
+
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>향신료 조회</span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">번호: <span th:text="${spiceVO.spiceno}"></span></li>
+          <li class="list-group-item">
+            이미지:
+            <div th:if="${spiceVO.spiceimg.endsWith('jpg') or spiceVO.spiceimg.endsWith('png') or spiceVO.spiceimg.endsWith('gif')}">
+              <img th:src="@{|/spice/storage/${spiceVO.spicethumb}|}" style="width: 90px; height: 70px" />
+            </div>
+            <div th:if="${spiceVO.spicesize == 0}">
+              <img src="/spice/images/None.jpg" style="width: 90px; height: 70px" />
+            </div>
+          </li>
+          <li class="list-group-item">이름: <span th:text="${spiceVO.spicename}"></span></li>
+
+          <li class="list-group-item">설명: <span th:text="${spiceVO.spicecont}"></span></li>
+          <li class="list-group-item">가격: <span th:text="${spiceVO.spiceprice}"></span></li>
+          <li class="list-group-item">구매처: <span th:text="${spiceVO.url}"></span></li>
+          <li class="list-group-item">등록일: <span th:text="${spiceVO.spicedate}"></span></li>
+          <li class="list-group-item">
+            좋아요: <span id="good_cnt"></span>&nbsp;&nbsp;&nbsp;&nbsp;
+            <a id="good" title="좋아요">
+              <i id="heart" class="fa-regular fa-heart" style="color: #de1212" title="추천하기"></i>
+              <i id="fill_heart" class="fa-solid fa-heart" style="color: #de1212; display: none" title="추천 취소"></i>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <br />
+      <!-- /spice/list_all_component 로 교체 -->
+      <div th:replace="~{th/spice/list_cno_component::list_cno_fragment}"></div>
+    </div>
+  </div>
+</html>

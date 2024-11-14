@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <table class="table table-hover">
+      <colgroup>
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 10%" />
+        <col style="width: 15%" />
+      </colgroup>
+      <thead>
+        <tr>
+          <th class="th_bs">번호</th>
+          <th class="th_bs">대분류</th>
+          <th class="th_bs">중분류</th>
+          <th class="th_bs">소분류</th>
+          <th class="th_bs">자료수</th>
+          <th class="th_bs">등록일</th>
+          <th class="th_bs">출력순서</th>
+          <th class="th_bs">출력모드</th>
+          <th class="th_bs">기타</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="crudcateVO, status:${list}">
+          <td class="td_bs" th:text="|${crudcateVO.crudcateno}|"></td>
+          <td class="td_bs">
+            <a th:href="@{|/crudcate/read/${crudcateVO.crudcateno}|}" style="display: block" th:text="${crudcateVO.name}"></a>
+          </td>
+          <td class="td_bs">
+            <a th:href="@{|/crudcate/read/${crudcateVO.crudcateno}|}" style="display: block" th:text="${crudcateVO.namesub}"></a>
+          </td>
+          <td class="td_bs">
+            <a th:href="@{|/crudcate/read/${crudcateVO.crudcateno}|}" style="display: block" th:text="${crudcateVO.namesubsub}"></a>
+          </td>
+          <td class="td_bs" th:text="${crudcateVO.cnt}"></td>
+          <td class="td_bs" th:text="${crudcateVO.crudate.substring(5, 10)}"></td>
+          <td class="td_bs">
+            <span th:text="${crudcateVO.seqno}" style="margin-right: 3px"></span>
+          </td>
+          <td class="td_bs">
+            <span th:if="${crudcateVO.visible == 'Y'}">
+              <a th:href="@{|/crudcate/visible_n/${crudcateVO.crudcateno}|}"><i class="bi bi-eye-slash"></i></a>
+              <!-- /static/crudcate/images/show.png -->
+            </span>
+            <span th:unless="${crudcateVO.visible == 'Y'}">
+              <a th:href="@{|/crudcate/visible_y/${crudcateVO.crudcateno}|}"><i class="bi bi-eye-fill"></i></a>
+              <!-- /static/crudcate/images/hide.png -->
+            </span>
+          </td>
+          <td class="td_bs">
+            <a th:href="@{|/crudcate/seqno_forward/${crudcateVO.crudcateno}|}"><i class="bi bi-arrow-up-square"></i></a>
+            <span class="menu_devide"> |</span>
+            <a th:href="@{|/crudcate/seqno_backward/${crudcateVO.crudcateno}|}"><i class="bi bi-arrow-down-square"></i></a>
+            <span class="menu_devide"> |</span>
+            <a th:href="@{|/crudcate/update/${crudcateVO.crudcateno}|}"><i class="bi bi-pencil-square"></i></a>
+            <span class="menu_devide"> |</span>
+            <a th:href="@{|/crudcate/delete/${crudcateVO.crudcateno}|}"><i class="bi bi-trash3"></i></a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- 페이지 버튼 목록 출력 시작 -->
+    <div class="bottom_menu" th:utext="${paging}"></div>
+    <!-- 페이지 버튼 목록 출력 종료 -->
+  </div>
+</html>

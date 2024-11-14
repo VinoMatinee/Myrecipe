@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span th:text="${crudcateVO.name}" class="title_line_text"></span>
+        > <span th:text="${crudcateVO.namesub}" class="title_line_text"></span> > <span>글 삭제</span>
+      </h1>
+    </div>
+
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="border rounded">
+              <div th:if="${boardVO.bphoto.endsWith('jpg') || boardVO.bphoto.endsWith('png')  || boardVO.bphoto.endsWith('gif')}">
+                <img th:src="@{|/board/storage/${boardVO.bphotosaved}|}" style="width: 100%" />
+              </div>
+              <div th:if="${boardVO.bsize == 0}">
+                <img src="/board/images/aaa.jpg" style="width: 100%" />
+              </div>
+              <div
+                th:if="${((boardVO.bphoto.endsWith('jpg') or boardVO.bphoto.endsWith('png')  or boardVO.bphoto.endsWith('gif')) == false) and (boardVO.bsize > 0)}"
+              >
+                <div>
+                  <span th:text="${boardVO.bphoto}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <span class="mb-3" style="font-size: 1.5em; font-weight: bold" th:text="${boardVO.btitle}"></span>
+            <p class="mb-3" style="font-size: 1em" th:text="${boardVO.bdate }"></p>
+            <form name="frm" method="POST" action="./delete">
+              <input type="hidden" name="crudcateno" th:value="${crudcateVO.crudcateno}" />
+              <input type="hidden" name="boardno" th:value="${boardVO.boardno}" />
+              <input type="hidden" name="accountno" th:value="${boardVO.accountno}" />
+              <input type="hidden" name="now_page" th:value="${now_page}" />
+              <input type="hidden" name="search_word" th:value="${word}" />
+
+              <div style="margin-top: 20px; clear: both">
+                <p style="color: #ff0000; font-weight: bold">삭제를 진행 하시겠습니까? 삭제하시면 복구 할 수 없습니다.</p>
+                <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">삭제</button>
+                <button type="button" onclick="history.back();" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">
+                  취소
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

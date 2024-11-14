@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <div>목록 수정 > <span th:text="${spiceVO.spicename}"></span>
+        </div>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /spice/list_search_component 로 교체 -->
+        <div th:replace="~{th/spice/list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+
+        <form name="frm" th:object="${spiceVO}" method="post" action="/spice/update" enctype="multipart/form-data">
+          <!-- input hidden -->
+          <input type="hidden" name="spiceno" th:value="${spiceVO.spiceno}" />
+          <input type="hidden" name="word" th:value="${word}" />
+          <input type="hidden" name="now_page" th:value="${now_page}" />
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="spicename"
+              value=""
+              autofocus="autofocus"
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{spicename}"
+              placeholder="향신료 이름을 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('spicename')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('spicename'))}" th:text="${err}"></div>
+            </div>
+          </div>
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="spicecont"
+              value=""
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{spicecont}"
+              placeholder="향신료 설명을 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('spicecont')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('spicecont'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="number"
+              name="spiceprice"
+              value=""
+              autofocus="autofocus"
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{spiceprice}"
+              placeholder="향신료 가격을 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('spiceprice')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('spiceprice'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="url"
+              value=""
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{url}"
+              placeholder="구매처(주소)를 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('url')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('url'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div style="margin:5px auto; width: 50%;">
+            <input
+              type="file"
+              name="fileMF"
+              id='fileMF'
+              value=""
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              placeholder="파일 선택"
+            />
+          </div>
+
+          <div class="d-flex justify-content-center mt-3">
+            <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">등록</button>
+          </div>
+        </form>
+
+        <br />
+        <!-- /spice/list_all_component 로 교체 -->
+        <div th:replace="~{th/spice/list_all_component::list_all_fragment}"></div>
+      </div>
+    </div>
+  </div>
+</html>

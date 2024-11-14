@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SB가 자동으로 구현하여 연동하는 interface -->
+<mapper namespace="dev.mvc.answer.AnswerDAOInter"> <!-- SB가 자동으로 구현하여 연동하는
+  interface -->
+
+  <select id="list" resultType="dev.mvc.answer.AnswerVO" parameterType="int">
+    SELECT answerno, text_answer, searchno, accountno
+    FROM ai_answer
+    WHERE accountno = #{accountno}
+  </select>
+
+  <select id="list_all" resultType="dev.mvc.answer.AnswerVO" parameterType="int">
+    SELECT aa.answerno, aa.text_answer, aa.searchno, ac.accountno, ac.aname, ais.img_search, ais.img_search_save, ais.img_search_thumb, ais.img_search_size, ais.rdate
+    FROM ai_answer aa
+    JOIN account ac ON aa.accountno = ac.accountno
+    JOIN ai_search ais ON aa.searchno = ais.searchno
+  </select>
+  
+   <!-- AI답변 검색된 코드 수 -->
+  <select id="list_all_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM ai_answer aa
+    JOIN account ac ON aa.accountno = ac.accountno
+    <if test="word != null and word !=''">
+      WHERE UPPER(aa.text_answer) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(ac.aname) LIKE '%' || UPPER(#{word}) || '%'
+    </if>
+    ORDER BY aa.accountno ASC
+  </select>
+  
+      <!-- 관리자용 답변 및 유저 검색 + 페이징 -->
+  <select id="list_all_search_paging" resultType="dev.mvc.answer.AnswerVO" parameterType="Map">
+  SELECT answerno, text_answer, searchno, accountno, aname, img_search, img_search_save, img_search_thumb, img_search_size, rdate, r
+  FROM (
+      SELECT answerno, text_answer, searchno, accountno, aname, img_search, img_search_save, img_search_thumb, img_search_size, rdate, rownum as r
+      FROM (
+          SELECT aa.answerno, aa.text_answer, aa.searchno, ac.accountno, ac.aname, ais.img_search, ais.img_search_save, ais.img_search_thumb, ais.img_search_size, ais.rdate
+    FROM ai_answer aa
+    JOIN account ac ON aa.accountno = ac.accountno
+    JOIN ai_search ais ON aa.searchno = ais.searchno
+          <if test="word != null and word !=''">
+          WHERE UPPER(aa.text_answer) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(ac.aname) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+          ORDER BY aa.accountno ASC
+      )
+  )
+  <!-- WHERE r >= 1 AND r <= 3; -->
+  WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+  
+  <!-- 유저용 답변 및 유저 검색 + 페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.answer.AnswerVO" parameterType="Map">
+  SELECT answerno, text_answer, searchno, accountno, img_search, img_search_save, img_search_thumb, img_search_size, rdate, r
+  FROM (
+      SELECT answerno, text_answer, searchno, accountno, img_search, img_search_save, img_search_thumb, img_search_size, rdate, rownum as r
+      FROM (
+          SELECT aa.answerno, aa.text_answer, aa.searchno, aa.accountno, ais.img_search, ais.img_search_save, ais.img_search_thumb, ais.img_search_size, ais.rdate
+          FROM ai_answer aa
+          JOIN ai_search ais ON aa.searchno = ais.searchno
+          WHERE aa.accountno = #{accountno}
+          <if test="word != null and word !=''">
+          WHERE UPPER(aa.text_answer) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+          ORDER BY aa.accountno ASC
+      )
+  )
+  <!-- WHERE r >= 1 AND r <= 3; -->
+  WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+  
+  <!-- 유저용 AI답변 검색된 코드 수 -->
+  <select id="list_search_count" resultType="int" parameterType="Map">
+    SELECT count(*) as cnt
+          FROM ai_answer aa
+          JOIN ai_search ais ON aa.searchno = ais.searchno
+          WHERE aa.accountno = #{accountno}
+    <if test="word != null and word !=''">
+      WHERE UPPER(aa.text_answer) LIKE '%' || UPPER(#{word}) || '%'
+    </if>
+    ORDER BY aa.accountno ASC
+  </select>
+
+</mapper>

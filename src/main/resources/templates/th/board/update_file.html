@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span th:text="${crudcateVO.name}" class="title_line_text"></span>
+        > <span th:text="${crudcateVO.namesub}" class="title_line_text"></span> > <span>파일 수정</span>
+      </h1>
+    </div>
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <div class="row g-4">
+          <div class="col-lg-6">
+            <div class="border rounded">
+              <div th:if="${boardVO.bphoto.endsWith('jpg') || boardVO.bphoto.endsWith('png')  || boardVO.bphoto.endsWith('gif')}">
+                <img th:src="@{|/board/storage/${boardVO.bphotosaved}|}" style="width: 100%" />
+              </div>
+              <div th:if="${boardVO.bsize == 0}">
+                <img src="/board/images/aaa.jpg" style="width: 100%" />
+              </div>
+              <div
+                th:if="${((boardVO.bphoto.endsWith('jpg') or boardVO.bphoto.endsWith('png')  or boardVO.bphoto.endsWith('gif')) == false) and (boardVO.bsize > 0)}"
+              >
+                <div>
+                  <span th:text="${boardVO.bphoto}"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-6">
+            <span class="mb-3" style="font-size: 1.5em; font-weight: bold" th:text="${boardVO.btitle}"></span>
+            <p class="mb-3" style="font-size: 1em" th:text="${boardVO.bdate }"></p>
+
+            <form name="frm" method="POST" action="./update_file" enctype="multipart/form-data">
+              <input type="hidden" name="crudcateno" th:value="${crudcateVO.crudcateno}" />
+              <input type="hidden" name="boardno" th:value="${boardVO.boardno}" />
+              <input type="hidden" name="accountno" th:value="${boardVO.accountno}" />
+              <input type="hidden" name="now_page" th:value="${now_page}" />
+              <input type="hidden" name="word" th:value="${word}" />
+
+              <span>변경 이미지 선택</span>
+              <input type="file" class="form-control" name="bphotoNF" id="bphotoNF" placeholder="파일 선택" />
+              <div style="margin-top: 20px; clear: both">
+                <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">파일 변경 처리</button>
+                <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">파일 삭제</button>
+                <button type="button" onclick="history.back();" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black">
+                  취소
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</html>

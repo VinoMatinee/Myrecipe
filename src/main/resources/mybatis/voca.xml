@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SB가 자동으로 구현하여 연동하는 interface -->
+<mapper namespace="dev.mvc.vocabulary.VocabularyDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+  <insert id="create_voca" parameterType="dev.mvc.vocabulary.VocabularyVO">
+    INSERT INTO VOCABULARY(vocano, voca, mean, managerno)
+    VALUES(voca_seq.nextval, #{voca}, #{mean}, #{managerno})
+  </insert>
+
+  
+  <select id="list" resultType="dev.mvc.vocabulary.VocabularyVO">
+    SELECT vocano, voca, mean, managerno
+    FROM vocabulary
+    ORDER BY vocano
+  </select>
+  
+  <select id="list_mean" resultType="String" parameterType="String">
+    SELECT mean
+    FROM vocabulary
+    where voca = #{voca}
+  </select>
+
+<!-- list_cno_search -->
+    <select id="list_search" resultType="dev.mvc.vocabulary.VocabularyVO" parameterType="HashMap">
+     SELECT vocano, voca, mean, managerno
+           
+    FROM vocabulary
+    <choose>
+      <when test="word == null or word == ''"> <!-- 검색하지 않는 경우 -->
+        WHERE vocano = #{vocano}
+      </when>
+      <otherwise> <!-- 검색하는 경우 -->
+        WHERE vocano = #{vocano} AND (UPPER(voca) LIKE '%' || UPPER(#{word}) || '%' 
+                                                  OR UPPER(mean) LIKE '%' || UPPER(#{word}) || '%' 
+                                                  
+      </otherwise>
+    </choose>
+    ORDER BY vocano DESC   
+  </select>
+
+  <!-- 카테고리별 검색 레코드 갯수 -->
+   <select id="list_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM vocabulary
+    <if test="word != null and word !=''">
+      WHERE UPPER(voca) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(mean) LIKE '%' || UPPER(#{word}) || '%' 
+    </if>
+    ORDER BY vocano ASC
+  </select>
+
+  <!-- 카테고리별 검색 + 페이징 목록 -->
+  <select id="list_search_paging" resultType="dev.mvc.vocabulary.VocabularyVO" parameterType="Map">
+    SELECT  vocano, voca, mean, managerno, r
+    FROM (
+        SELECT vocano, voca, mean, managerno, rownum as r
+        FROM (
+            SELECT vocano, voca, mean, managerno
+            FROM vocabulary
+            <if test="word != null and word !=''">
+             WHERE UPPER(voca) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(mean) LIKE '%' || UPPER(#{word}) || '%'  
+            </if>
+            ORDER BY vocano ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+
+<update id="update" parameterType="dev.mvc.vocabulary.VocabularyVO">
+    UPDATE vocabulary
+    SET voca = #{voca}, mean = #{mean}
+    WHERE vocano = #{vocano}
+    
+  </update>
+
+
+<delete id="delete" parameterType="dev.mvc.vocabulary.VocabularyVO"> 
+    DELETE FROM vocabulary WHERE vocano = #{vocano}
+  </delete>
+
+</mapper>

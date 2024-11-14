@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>카테고리 수정</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    <!-- Header End -->
+
+    <!-- 컨테이너  -->
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+        <!-- /crudcate/list_search_component 로 교체 -->
+        <div th:replace="~{th/crudcate/list_search_component::list_search_fragment}"></div>
+        <br />
+        <br />
+
+        <form name="frm" th:object="${crudcateVO}" method="post" action="/crudcate/update">
+          <!-- hidden -->
+          <input type="hidden" name="crudcateno" th:value="${crudcateVO.crudcateno}" />
+          <input type="hidden" name="word" th:value="${word}" />
+          <input type="hidden" name="now_page" th:value="${now_page}" />
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="name"
+              value=""
+              autofocus="autofocus"
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{name}"
+              placeholder="대분류 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('name')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('name'))}" th:text="${err}"></div>
+            </div>
+          </div>
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="namesub"
+              value=""
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{namesub}"
+              placeholder="중분류 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('namesub')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('namesub'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="namesubsub"
+              value=""
+              autofocus="autofocus"
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{namesubsub}"
+              placeholder="소분류 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('namesubsub')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('namesubsub'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="cnt"
+              value=""
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{cnt}"
+              placeholder="관련 자료수를 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('cnt')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('cnt'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="seqno"
+              value=""
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{seqno}"
+              placeholder="출력순서를 입력하세요."
+            />
+            <div th:if="${#fields.hasErrors('seqno')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('seqno'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div style="margin: 5px auto; width: 50%">
+            <input
+              type="text"
+              name="visible"
+              value=""
+              class="form-control fom-control-sm"
+              style="width: 100%"
+              th:field="*{visible}"
+              placeholder="출력 모드"
+            />
+            <div th:if="${#fields.hasErrors('visible')}" class="alert alert-danger" role="alert" style="margin-top: 5px">
+              <div th:each="err : ${#lists.sort(#fields.errors('visible'))}" th:text="${err}"></div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-center mt-3">
+            <button type="submit" class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1">수정</button>
+            <button
+              type="button"
+              th:attr="onclick=|location.href='/crudcate/list_search?word=${word}&now_page=${now_page}'|"
+              class="btn btn-primary border-0 border-secondary py-2 px-3 rounded-pill text-black mx-1"
+            >
+              취소
+            </button>
+          </div>
+        </form>
+
+        <br />
+        <!-- /crudcate/list_all_component 로 교체 -->
+        <div th:replace="~{th/crudcate/list_all_component::list_all_fragment}"></div>
+      </div>
+    </div>
+  </div>
+</html>

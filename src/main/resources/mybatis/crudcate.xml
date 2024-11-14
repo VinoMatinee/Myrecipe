@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.crudcate.CrudcateDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+  <!-- Create -->
+  <insert id="create" parameterType="dev.mvc.crudcate.CrudcateVO">
+    INSERT INTO CRUDCATE(crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible)
+    VALUES(CRUDCATE_SEQ.nextval, #{name}, #{namesub}, #{namesubsub}, 0, sysdate, #{seqno}, 'Y')
+  </insert>
+
+  <!-- List -->
+  <select id="list_all" resultType="dev.mvc.crudcate.CrudcateVO">
+    SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible
+    FROM crudcate
+    ORDER BY crudcateno ASC
+  </select>
+
+  <!-- Read -->
+  <select id="read" resultType="dev.mvc.crudcate.CrudcateVO" parameterType = "int">
+    SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible
+    FROM crudcate
+    WHERE crudcateno=#{crudcateno}
+  </select>
+
+  <!-- Update -->
+  <update id="update" parameterType="dev.mvc.crudcate.CrudcateVO">
+    UPDATE crudcate
+    SET name = #{name}, namesub = #{namesub}, namesubsub = #{namesubsub}, crudate = sysdate, cnt = #{cnt}, seqno = #{seqno}, visible = #{visible}
+    WHERE crudcateno = #{crudcateno}
+  </update>
+
+  <!-- Delete -->
+  <delete id="delete" parameterType = "int">
+    DELETE FROM crudcate
+    WHERE crudcateno = #{crudcateno}
+  </delete>
+
+  <!-- seqno_forward -->
+  <update id="seqno_forward" parameterType="Integer">
+    UPDATE crudcate
+    SET crudate = sysdate, seqno = seqno - 1
+    WHERE crudcateno = #{crudcateno}
+  </update>
+
+  <!-- seqno_backward -->
+  <update id="seqno_backward" parameterType="Integer">
+    UPDATE crudcate
+    SET crudate = sysdate, seqno = seqno + 1
+    WHERE crudcateno = #{crudcateno}
+  </update>
+
+  <!-- 카테고리 공개 -->
+  <update id="visible_y" parameterType="Integer">
+    UPDATE crudcate SET visible='Y' 
+    WHERE crudcateno = #{crudcateno}
+  </update>
+
+  <!-- 카테고리 비공개 -->
+  <update id="visible_n" parameterType="Integer">
+    UPDATE crudcate SET visible='N' 
+    WHERE crudcateno = #{crudcateno}
+  </update>
+
+  <!-- 공개할 중분류 목록 -->
+  <select id="list_all_name_y" resultType="dev.mvc.crudcate.CrudcateVO">
+    SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible
+    FROM crudcate
+    WHERE name IN (
+      SELECT DISTINCT name
+      FROM crudcate
+    ) AND namesub = '-' AND visible='Y'
+    ORDER BY name ASC
+  </select>
+
+  <!-- 공개할 소분류 목록 -->
+  <select id="list_all_namesub_y" resultType="dev.mvc.crudcate.CrudcateVO" parameterType="String">
+    SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible
+    FROM crudcate
+    WHERE name = #{name} AND namesub != '-' AND visible = 'Y' AND namesubsub = '-'
+    ORDER BY seqno ASC
+  </select>
+
+  <!-- 관리자용 검색 -->
+  <select id="list_search" resultType="dev.mvc.crudcate.CrudcateVO" parameterType="String">
+    SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible
+    FROM crudcate
+    <if test="word != null and word !=''">
+      WHERE UPPER(name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(namesub) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(namesubsub) LIKE '%' || UPPER(#{word}) || '%'
+    </if>
+    ORDER BY crudcateno DESC
+  </select>
+
+  <!--페이징 -->
+  <select id="list_search_paging" resultType="dev.mvc.crudcate.CrudcateVO" parameterType="Map">
+  SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible, r
+  FROM (
+      SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible, rownum as r
+      FROM (
+          SELECT crudcateno, name, namesub, namesubsub, cnt, crudate, seqno, visible
+          FROM crudcate
+          <if test="word != null and word !=''">
+          WHERE UPPER(name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(namesub) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(namesubsub) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+          ORDER BY crudcateno DESC
+      )
+  )
+  <!-- WHERE r >= 1 AND r <= 3; -->
+  WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+
+  <!-- 검색된 코드 수 -->
+  <select id="list_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM crudcate
+    <if test="word != null and word !=''">
+      WHERE UPPER(name) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(namesub) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(namesubsub) LIKE '%' || UPPER(#{word}) || '%'
+    </if>
+    ORDER BY crudcateno DESC
+  </select>
+
+
+</mapper>
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SB가 자동으로 구현하여 연동하는 interface -->
+<mapper namespace="dev.mvc.account.AccountDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+  <select id="checkID_account" resultType="int" parameterType="String">
+    SELECT COUNT(aid) as cnt
+    FROM ACCOUNT
+    WHERE aid=#{aid}
+  </select>
+  
+  <insert id="signin_account" parameterType="dev.mvc.account.AccountVO">
+    INSERT INTO ACCOUNT(accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade)
+    VALUES (account_seq.nextval, #{aid}, #{apasswd}, #{aname}, #{aprofile_img}, #{aprofile_imgsave}, #{aprofile_thum}, #{aprofile_size}, #{zipcode}, #{address1}, 
+               #{address2}, #{atel}, sysdate, #{agrade})
+  </insert>
+  
+  <select id="list" resultType="dev.mvc.account.AccountVO">
+    SELECT accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade
+    FROM account
+    ORDER BY agrade ASC, aid ASC
+  </select>
+  
+    <!-- accountno로 회원 정보 조회 -->
+  <select id="read" resultType="dev.mvc.account.AccountVO" parameterType="int">
+    SELECT accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade
+    FROM account
+    WHERE accountno = #{accountno}
+  </select>  
+
+  <!-- id(이메일)로 회원 정보 조회 -->
+  <select id="readById" resultType="dev.mvc.account.AccountVO" parameterType="String">
+    SELECT accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade
+    FROM account
+    WHERE aid = #{aid}
+  </select>
+  
+    <!-- 로그인 -->
+  <select id="login_account" resultType="int" parameterType="HashMap">
+    SELECT COUNT(accountno) as cnt
+    FROM account
+    WHERE aid=#{aid} AND apasswd=#{apasswd}
+  </select>
+  
+  <!-- update -->
+   <update id="update_account" parameterType="dev.mvc.account.AccountVO">
+    UPDATE account 
+    SET aname=#{aname}, atel=#{atel}, zipcode=#{zipcode}, address1=#{address1}, address2=#{address2}, 
+         aprofile_img=#{aprofile_img}, aprofile_imgsave=#{aprofile_imgsave}, aprofile_thum=#{aprofile_thum}, aprofile_size=#{aprofile_size}
+    WHERE accountno=#{accountno}
+  </update>
+  
+  <!-- delete -->
+    <delete id="delete_account" parameterType="int">
+    DELETE FROM account
+    WHERE accountno=#{accountno}
+  </delete>
+  
+    <!-- 관리자용 회원 검색 -->
+  <select id="list_account_search" resultType="dev.mvc.account.AccountVO" parameterType="String">
+    SELECT accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade
+    FROM account
+    <if test="word != null and word !=''">
+      WHERE UPPER(aid) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(aname) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(atel) LIKE '%' || UPPER(#{word}) || '%'
+    </if>
+    ORDER BY accountno ASC
+  </select>
+  
+  <!--페이징 -->
+  <select id="list_account_search_paging" resultType="dev.mvc.account.AccountVO" parameterType="Map">
+  SELECT accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade, r
+  FROM (
+      SELECT accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade, rownum as r
+      FROM (
+          SELECT accountno, aid, apasswd, aname, aprofile_img, aprofile_imgsave, aprofile_thum, aprofile_size, zipcode, address1, address2, atel, adate, agrade
+          FROM account
+          <if test="word != null and word !=''">
+          WHERE UPPER(aid) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(aname) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(atel) LIKE '%' || UPPER(#{word}) || '%'
+          </if>
+          ORDER BY accountno ASC
+      )
+  )
+  <!-- WHERE r >= 1 AND r <= 3; -->
+  WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+  </select>
+
+  <!-- 검색된 코드 수 -->
+  <select id="list_account_search_count" resultType="int" parameterType="String">
+    SELECT count(*) as cnt
+    FROM account
+    <if test="word != null and word !=''">
+      WHERE UPPER(aid) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(aname) LIKE '%' || UPPER(#{word}) || '%' OR UPPER(atel) LIKE '%' || UPPER(#{word}) || '%'
+    </if>
+    ORDER BY accountno ASC
+  </select>
+  
+
+  <!-- 가입된 회원인지 확인 -->
+  <select id="check_user" resultType="int" parameterType="Map">
+    SELECT COUNT(*) as cnt
+    FROM ACCOUNT
+    WHERE aname=#{aname} and atel=#{atel}
+  </select>
+  
+  <!-- 아이디 찾기 -->
+    <select id="find_aid" resultType="String" parameterType="Map">
+    SELECT aid
+    FROM ACCOUNT
+    WHERE aname=#{aname} and atel=#{atel}
+  </select>
+  
+      <!-- 회원번호 찾기 -->
+  <select id="accountno_return" resultType="int" parameterType="map">
+    SELECT accountno
+    FROM ACCOUNT
+    WHERE aid=#{aid} and aname=#{aname}
+  </select>
+  
+  <!-- 유저 검사(passwd)  -->
+  <select id="check_user_passwd" resultType="int" parameterType="HashMap">
+    SELECT COUNT(*) as cnt
+    FROM ACCOUNT
+    WHERE aid =#{aid} and aname=#{aname}
+  </select>
+  
+    <!--  현재 패스워드 검사 -->
+  <select id="passwd_check" parameterType="HashMap" resultType="int">
+    SELECT COUNT(accountno) as cnt
+    FROM account
+    WHERE accountno=#{accountno} AND apasswd=#{apasswd}
+  </select>
+   
+  <!-- 패스워드 변경 -->
+  <update id="passwd_update" parameterType="HashMap">
+    UPDATE account
+    SET apasswd=#{apasswd}
+    WHERE accountno=#{accountno}
+  </update>
+
+</mapper>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.lunch.LunchDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+  <select id="list" resultType="dev.mvc.lunch.LunchVO" parameterType="int">
+    SELECT L_NO, L_MENU, L_RECIPE, L_DATE
+    FROM L_RECOM
+    WHERE ACCOUNTNO = #{accountno}
+    ORDER BY L_NO desc
+  </select>
+
+  <select id="list_all" resultType="dev.mvc.lunch.LunchVO" parameterType="int">
+    SELECT L_NO, L_MENU, L_RECIPE, L_DATE
+    FROM L_RECOM
+  </select>
+
+  <delete id="delete" parameterType="int">
+    DELETE 
+    FROM L_RECOM 
+    WHERE L_NO = #{l_no}
+  </delete>
+  
+</mapper>

@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.recommend.RecDAOInter">
+
+  <insert id="good" parameterType="dev.mvc.recommend.RecVO">
+    insert into recommend(recono, spiceno, accountno, recodate)
+    values(recommend_seq.nextval, #{spiceno}, #{accountno}, sysdate)
+  </insert>
+
+  <select id="good_cnt" resultType="int" parameterType="HashMap">
+    select count(*) as cnt
+    from recommend
+    where spiceno = #{spiceno} and accountno = #{accountno}
+  </select>
+
+  <delete id="good_cancel" parameterType="Hashmap">
+    delete recommend
+    where spiceno = #{spiceno} and accountno = #{accountno}
+  </delete>
+  
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="dev.mvc.bookmark.BookmarkDAOInter">
+
+    <!-- 북마크 추가 -->
+    <insert id="bm_insert" parameterType="dev.mvc.bookmark.BookmarkVO">
+        INSERT INTO bookmark (bookmarkno, accountno, boardno ,bookmarkurl, bmdate)
+        VALUES (bookmark_seq.nextval, #{accountno}, #{boardno} ,#{bookmarkurl}, sysdate)
+    </insert>
+
+    <!-- 북마크 제거 -->
+    <delete id="bm_delete" parameterType="dev.mvc.bookmark.BookmarkVO">
+        DELETE FROM bookmark
+        WHERE accountno = #{accountno}
+        AND boardno = #{boardno}
+    </delete>
+
+    <!-- 북마크 검색 카운트 -->
+    <select id="bm_list_count" resultType="int" parameterType="HashMap">
+        SELECT COUNT(*) as cnt
+        FROM bookmark bm
+        INNER JOIN board b ON bm.boardno = b.boardno
+        <choose>
+            <when test="word == null or word == ''"> <!-- 검색하지 않는 경우의 레코드 갯수 -->
+                WHERE bm.accountno = #{accountno}
+            </when>
+            <otherwise> <!-- 검색하는 경우의 레코드 갯수 -->
+                WHERE bm.accountno = #{accountno} AND (
+                    UPPER(bm.bookmarkurl) LIKE '%' || UPPER(#{word}) || '%' OR
+                    UPPER(b.btitle) LIKE '%' || UPPER(#{word}) || '%' OR
+                    UPPER(b.bcontent) LIKE '%' || UPPER(#{word}) || '%' OR
+                    UPPER(b.btag) LIKE '%' || UPPER(#{word}) || '%'
+                )
+            </otherwise>
+        </choose>
+    </select>
+
+    <!-- 북마크 검색 + 페이징 -->
+    <select id="bm_list" parameterType="HashMap" resultType="dev.mvc.bookmark.BookmarkVO">
+        SELECT bookmarkno, accountno, boardno, bookmarkurl, bmdate, btitle, bcontent, btag, r 
+        FROM (
+            SELECT bm.bookmarkno, bm.accountno, bm.boardno, bm.bookmarkurl, bm.bmdate, b.btitle, b.bcontent, b.btag, rownum as r
+            FROM bookmark bm
+            INNER JOIN board b ON bm.boardno = b.boardno
+            WHERE bm.accountno = #{accountno}
+            <if test="word != null and word != ''">
+                AND (
+                    UPPER(bm.bookmarkurl) LIKE '%' || UPPER(#{word}) || '%' OR
+                    UPPER(b.btitle) LIKE '%' || UPPER(#{word}) || '%' OR
+                    UPPER(b.bcontent) LIKE '%' || UPPER(#{word}) || '%' OR
+                    UPPER(b.btag) LIKE '%' || UPPER(#{word}) || '%'
+                )
+            </if>
+            ORDER BY bm.bookmarkno DESC
+        )
+        WHERE <![CDATA[ r >= #{start_num} AND r <= #{end_num} ]]>
+    </select>
+
+</mapper>

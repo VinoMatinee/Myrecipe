@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <!-- Header start -->
+  <div class="container-fluid page-header py-5">
+    <h1 class="text-center text-white display-6">
+      <span class="title_line_text">단어장</span> > <span class="title_line_text">목록(관리자 전용)</span>
+      <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+    </h1>
+
+    <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a th:href="@{/vocabulary/create}">등록</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+    </ol>
+  </div>
+  <!-- Single Page Header End -->
+
+  <input type="hidden" name="now_page" th:value="${now_page}" />
+  <input type="hidden" name="word" th:value="${word}" />
+
+
+  <div class='menu_line'></div>
+  <div class="container-fluid py-5">
+    <div class="container py-5">
+      <div th:replace="~{th/vocabulary/list_cno_search_component::list_cno_search_fragment}"></div>
+      <br />
+      <br />
+      <div class="table-responsive">
+        <table class="table">
+          <colgroup>
+
+            <col style='width: 30%;' />
+            <col style='width: 50%;' />
+            <col style='width: 20%;' />
+
+          </colgroup>
+          <thead>
+            <tr>
+
+              <th class='th_bs'>단어</th>
+              <th class='th_bs'>뜻</th>
+              <th class='th_bs'>수정|삭제</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="vocabularyVO, status:${list}">
+              <td class='td_basic' th:text="${vocabularyVO.voca}"></td>
+              <td class='td_basic'>
+                <span th:if="${vocabularyVO.mean.length() > 15 }"
+                  th:text="|${vocabularyVO.mean.substring(0, 15) }...|"></span>
+
+              </td>
+              <td class='td_basic'>
+                <a th:href="@{/vocabulary/update(vocano=${vocabularyVO.vocano})}">
+                  <img src='/member/images/update.png' title='수정' class="icon"></a>
+                </a>
+                <a th:href="@{/vocabulary/delete(vocano=${vocabularyVO.vocano})}">
+                  <img src='/member/images/delete.png' title='삭제' class="icon">
+                </a>
+              </td>
+
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class='bottom_menu'>
+    <div class="bottom_menu" th:utext="${paging}"></div>
+  </div>
+</div>
+
+
+
+
+</html>

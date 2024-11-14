@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- SB가 자동으로 구현하여 연동하는 interface -->
+<mapper namespace="dev.mvc.search.SearchDAOInter"> <!-- SB가 자동으로 구현하여 연동하는 interface -->
+
+<insert id="search_word" parameterType="dev.mvc.search.SearchVO">
+    <selectKey keyProperty="num" resultType="int" order="BEFORE">
+        SELECT COUNT(*) AS num
+        FROM search
+        WHERE word = #{word}
+    </selectKey>
+
+    <choose>
+        <when test="num > 0">
+            UPDATE search
+            SET cnt = cnt + 1
+            WHERE word = #{word}
+        </when>
+        <otherwise>
+            INSERT INTO search(searchno, word, cnt)
+            VALUES(search_seq.nextval, #{word}, 1)
+        </otherwise>
+    </choose>
+</insert>
+
+
+</mapper>

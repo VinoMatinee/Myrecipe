@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}"> <!-- layout.html 상속-->
+<div layout:fragment="content">
+
+  <div class='title_line'>
+    > 파일 수정
+  </div>
+  
+  <aside class="aside_right">
+    <a href="/breply/create">댓글 등록</a>
+    <span class='menu_divide' >│</span>
+    <a href="/breply/list">댓글 목록</a>
+    <span class='menu_divide' >│</span>
+    <a th:href="@{|/breply/delete/${breplyno}|}">댓글 삭제</a>
+    <span class='menu_divide' >│</span>
+    <a href="javascript:location.reload();">새로고침</a>
+  </aside> 
+  
+  <div class='menu_line'></div>
+  
+  <fieldset class="fieldset_basic">
+    <ul>
+      <li class="li_none">
+        <div th:if="${breplyVO.breplyimg.endsWith('jpg') or breplyVO.breplyimg.endsWith('png')  or breplyVO.breplyimg.endsWith('gif')}"
+             style='text-align: center; width: 50%; float: left;'>
+        <img th:src="@{|/contents/storage/${breplyVO.breplythumb}|}" style="width: 90%;">
+        </div>
+
+        <div th:if="${((breplyVO.breplyimg.endsWith('jpg') or breplyVO.breplyimg.endsWith('png')  or breplyVO.breplyimg.endsWith('gif')) == false) and (breplyVO.size1 > 0)}"
+             class="display_table" style='width: 50%; float: left;'>
+          <div class="display_table_cell">
+            <span th:text="${breplyVO.breplyimg}"></span>
+          </div>
+        </div>
+
+        <div th:if="${breplyVO.breplysize == 0}" style='text-align: center; width: 50%; float: left;'>
+          <img src="/breply/images/none3.png" style="width: 90%;">
+        </div>
+
+        <DIV style='text-align: left; width: 47%; float: left;'>
+          <br>
+          <FORM name='frm' method='POST' action='/breply/update' enctype="multipart/form-data">
+            <!--<input type="hidden" name="cateno" th:value="${cateVO.cateno }">-->
+            <input type="hidden" name="breplyno" th:value="${breplyVO.breplyno}">
+
+            <textarea type="text" name="breplycont" id="breplycont"style='font-size: 1.5em; width: 600px;' th:text="${breplyVO.breplycont}"></textarea>
+                
+            <br><br> 
+            변경 이미지 선택<br>  
+            <input type='file' name='file1MF' id='file1MF' value='' placeholder="파일 선택"><br><br><br>
+            <input type='password' name='breplypasswd' id='breplypasswd' value='1234'><br>
+            <br>
+            <div style='margin-top: 20px; clear: both;'>  
+              <button type="submit" class="btn btn-secondary btn-sm">저장</button>
+              <button type="submit" class="btn btn-secondary btn-sm">파일 삭제</button>
+              <button type="button" onclick="history.back();" class="btn btn-secondary btn-sm">취소</button>
+            </div>  
+          </FORM>
+        </DIV>
+      </li>
+    </ul>
+  </fieldset>
+
+</div>
+
+</html>
+  

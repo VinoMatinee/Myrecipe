@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+ 
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="dev.mvc.gpa.GpaDAOInter">
+  <insert id="create" parameterType="dev.mvc.gpa.GpaVO">
+    INSERT INTO GPA (GPANO, GPASCORE, ACCOUNTNO, BOARDNO)
+    VALUES (GPA_SEQ.NEXTVAL, #{gpascore}, 
+            #{accountno}, 
+            #{boardno})
+</insert>
+  
+  <select id="readById" resultType="dev.mvc.gpa.GpaVO" parameterType="String">
+    SELECT ACCOUNTNO FROM ACCOUNT WHERE AID = #{aid}
+</select>
+  
+ 
+   <select id="list" parameterType="dev.mvc.gpa.GpaVO">
+  SELECT GPANO, GPASCORE, ACCOUNTNO, BOARDNO, GPADATE
+  FROM GPA
+  ORDER BY GPANO ASC
+  </select>
+  
+  <select id="list_search_count" resultType="int" parameterType="String">
+  SELECT count(*) AS cnt
+   FROM GPA 
+            
+  <if test="word != null and word !=''">
+            WHERE UPPER(BOARDNO) LIKE '%' || UPPER(#{word}) || '%'  
+            </if>
+   ORDER BY GPANO ASC
+   
+  
+</select>
+
+  
+  <!-- 카테고리별 검색 + 페이징 목록 -->
+  <select id="list_search_paging" resultType="dev.mvc.gpa.GpaVO" parameterType="HashMap">
+        SELECT GPANO, GPASCORE, ACCOUNTNO, BOARDNO, GPADATE, r
+        FROM (
+            SELECT GPANO, GPASCORE, ACCOUNTNO, BOARDNO, GPADATE, ROWNUM as r
+            FROM (
+            SELECT GPANO, GPASCORE, ACCOUNTNO,BOARDNO, GPADATE 
+            FROM GPA 
+            
+            <if test="word != null and word !=''">
+            WHERE UPPER(BOARDNO) LIKE '%' || UPPER(#{word}) || '%'  
+            </if>
+            ORDER BY GPANO ASC
+        )
+    )
+    WHERE r &gt;= #{start_num} AND r &lt;= #{end_num}
+    </select>
+  
+  
+  <select id="avgscore" parameterType="dev.mvc.gpa.GpaVO">
+  SELECT ROUND(AVG(GPASCORE), 0) AS avg_gpascore
+FROM GPA
+WHERE boardno = #{boardno}
+  </select>
+  
+   <delete id="delete" parameterType="dev.mvc.gpa.GpaVO">
+    DELETE FROM GPA WHERE GPANO=#{gpano}
+  </delete>
+  
+  
+  <update id="update" parameterType="dev.mvc.gpa.GpaVO">
+    UPDATE GPA
+    SET GPASCORE = #{gpascore}
+    WHERE GPANO = #{gpano}
+    
+  </update>
+  
+</mapper>
+
+
+
+
+
+
+
+
+
+

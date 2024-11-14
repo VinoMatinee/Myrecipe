@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <div layout:fragment="content">
+    <div class="title_line">카테고리 조회</div>
+
+    <div class="menu_line"></div>
+    <!-- /spice/list_search_component 로 교체 -->
+    <div th:replace="~{th/spice/list_search_component::list_search_fragment}"></div>
+    <div class="menu_line"></div>
+
+    <div class="container w-75 mt-3">
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item">번호: <span th:text="${spiceVO.spiceno}"></span></li>
+        <li class="list-group-item">이미지: 
+          <div th:if="${spiceVO.spiceimg.endsWith('jpg') or spiceVO.spiceimg.endsWith('png') or spiceVO.spiceimg.endsWith('gif')}">
+            <img th:src="@{|/spice/storage/${spiceVO.spicethumb}|}" style="width: 90px; height: 70px;">
+          </div>
+          <div th:if="${spiceVO.spicesize == 0}">
+            <img src="/spice/images/None.jpg" style="width: 90px; height: 70px;">
+          </div></li>
+        <li class="list-group-item">이름: <span th:text="${spiceVO.spicename}"></span></li>
+        <li class="list-group-item">설명: <span th:text="${spiceVO.spicecont}"></span></li>
+        <li class="list-group-item">가격: <span th:text="${spiceVO.spiceprice}"></span></li>
+        <li class="list-group-item">구매처: <span th:text="${spiceVO.url}"></span></li>
+        <li class="list-group-item">등록일: <span th:text="${spiceVO.spicedate}"></span></li>
+      </ul>
+    </div>
+
+    <br />
+    <!-- /spice/list_all_component 로 교체 -->
+    <div th:replace="~{th/spice/list_all_component::list_all_fragment}"></div>
+  </div>
+</html>

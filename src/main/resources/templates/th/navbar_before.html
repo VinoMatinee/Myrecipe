@@ -1,0 +1,75 @@
+<nav th:fragment="navbarFragment" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">레시피 ver 1.0</a>
+    <button
+      class="navbar-toggler"
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarSupportedContent"
+      aria-controls="navbarSupportedContent"
+      aria-expanded="false"
+      aria-label="Toggle navigation"
+    >
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNavDropdown">
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown" th:each="crudcateVOMenu:${menu}">
+          <a
+            class="nav-link dropdown-toggle"
+            href="#"
+            id="navbarDropdownMenuLink"
+            role="button"
+            data-bs-toggle="dropdown"
+            aria-expanded="false"
+            th:text="${crudcateVOMenu.name}"
+          >
+          </a>
+          <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+            <li th:each="crudcateVO:${crudcateVOMenu.list_namesubs}">
+              <a class="dropdown-item" th:href="@{|/board/list_cno?crudcateno=${crudcateVO.crudcateno}|}" th:text="${crudcateVO.namesub}"></a>
+            </li>
+          </ul>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/crudcate/list_search}">카테고리 목록</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/breply/create}">댓글 등록</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/breply/list}">댓글 목록</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" th:href="@{/ai/create}">AI 질문</a>
+        </li>
+
+        <li class="nav-item"><a class="nav-link" href="/account/signin">회원 가입</a></li>
+        <li class="nav-item" th:if="${session.accountno != null}">
+          <a class="nav-link" th:href="@{|/account/read?accountno=${session.accountno}|}">회원 정보 조회</a>
+        </li>
+        <li class="nav-item" th:if="${session.accountno != null}">
+          <a class="nav-link" th:href="@{|/account/delete?accountno=${session.accountno}|}">회원 정보 삭제</a>
+        </li>
+        <li class="nav-item"><a class="nav-link" href="/account/list">회원 목록</a></li>
+        <li class="nav-item"><a class="nav-link" href="/manager/list">관리자 목록</a></li>
+
+        <li class="nav-item">
+          <span th:if="${session.accountno == null} and ${session.managerno == null}"
+            ><a class="nav-link" href="/account/login" th:text="@{|로그인|}"></a
+          ></span>
+          <span th:if="${session.accountno != null} or ${session.managerno != null}"
+            ><a class="nav-link" href="/account/logout" th:text="@{|${session.accountno != null ? session.aid : session.mid} 로그아웃|}"></a
+          ></span>
+        </li>
+      </ul>
+    </div>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0"></ul>
+    </div>
+  </div>
+</nav>

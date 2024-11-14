@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html layout:decorate="~{th/layout}">
+  <!-- layout.html 상속-->
+  <div layout:fragment="content">
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>지역 음식 삭제</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+    </div>
+    
+    
+    <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+    <div id="panel_delete" style="padding: 10px 0px 10px 0px; width: 100%; text-align: center">
+      <form name="frm" th:object="${regionfoodVO}" method="post" action="/regionfood/delete">
+        <!-- hidden -->
+        <input type="hidden" name="foodno" th:value="${regionfoodVO.foodno}" />
+        
+        <div class="msg_warning">지역 음식을 삭제하면 복구 할 수 없습니다.</div>
+        [ <span th:text="${regionfoodVO.foodno}" class="title_line_text"></span>  
+         ]
+        <div class="content_body_bottom">
+          <button type="submit" class="btn btn-secondary btn-sm">삭제</button>
+          <button type="button" th:attr="onclick=|location.href='/regionfood/list'|" class="btn btn-secondary btn-sm">취소</button>
+        </div>
+      </form>
+    </div>
+    </div>
+    </div>
+  </div>
+</html>

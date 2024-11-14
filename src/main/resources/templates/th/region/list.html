@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+
+
+<html layout:decorate="~{th/layout}"> 
+<head>
+  <link href="/css/style.css" rel="Stylesheet" type="text/css"> <!-- /static 기준 -->
+</head>
+<div layout:fragment="content">
+<div th:fragment="list">
+   <!-- Header start -->
+    <div class="container-fluid page-header py-5">
+      <h1 class="text-center text-white display-6">
+        <span>지역 등록</span>
+        <span th:if="${word != ''}" th:text="|> ${word} (${search_count} 건)|" class="title_line_text"></span>
+      </h1>
+      <ol class="breadcrumb justify-content-center mb-0">
+      <li class="breadcrumb-item">
+        <a th:href="@{/region/create}">등록</a>
+      </li>
+      <li class="breadcrumb-item">
+        <a href="javascript:location.reload();">새로고침</a>
+      </li>
+    </ol>
+    </div>
+    <!-- Header End -->
+  
+   <div class="container-fluid fruite py-5">
+      <div class="container py-5">
+   <input type="hidden" name="now_page" th:value="${now_page}" />
+    <input type="hidden" name="word" th:value="${word}" />
+<div th:replace="~{th/region/list_cno_search_component::list_cno_search_fragment}"></div>
+ 
+   
+  <div class='menu_line'></div>
+       
+   <table class="table">
+    <colgroup>
+      <col style='width: 25%;'/>
+      <col style='width: 25%;'/>
+      <col style='width: 25%;'/>
+      <col style='width: 25%;'/>
+      
+      
+      
+      <col style='width: 5%;'/>
+    </colgroup>
+    <thead>
+            <tr>
+
+               <th class='th_bs'>지역번호</th>
+      <th class='th_bs'>지역명</th>
+      <th class='th_bs'>등록한 관리자</th>
+      
+      <th class='th_bs'>수정|삭제</th>
+      
+
+            </tr>
+          </thead>
+    
+   <tbody>
+    <tr th:each="regionVO, status:${list}">
+      
+       
+          <td class='td_basic' th:text="${regionVO.regiono}"></td>
+        
+         <td class='td_basic' th:text="${regionVO.regionname}" th:attr="onclick=|location.href='/regionfood/list?regiono=${regionVO.regiono}'|">
+          
+        </td>
+      
+              <td class='td_basic' th:text="${regionVO.managerno}"></td>
+       
+      <td class='td_basic'>
+        <a th:href="@{/region/update(regiono=${regionVO.regiono})}">
+        <img src='/member/images/update.png' title='수정' class="icon"></a>
+        </a>
+        <a th:href="@{/region/delete(regiono=${regionVO.regiono})}">
+    <img src='/member/images/delete.png' title='삭제' class="icon">
+</a>
+      </td>
+      </fieldset>
+    </tr>
+  </table>
+   
+  <div class='bottom_menu'>
+     <div class="bottom_menu" th:utext="${paging}"></div>
+  </div>
+</div>
+</div>
+</div>
+</div>
+</html>
+
+
